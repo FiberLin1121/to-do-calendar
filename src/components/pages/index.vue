@@ -544,6 +544,7 @@ export default {
     openLoginModal() {
       let self = this;
       self.$router.push("innerPage/todoLists");
+      console.log("git test");
     },
     // closeLoginModal() {
     //   let self = this;
