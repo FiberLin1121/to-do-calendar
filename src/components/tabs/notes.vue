@@ -1,6 +1,6 @@
 <template>
-  <div id="app">
-    <router-view/>
+  <div>
+    <h1>notes</h1>
   </div>
 </template>
 
@@ -12,6 +12,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
-@import "./assets/all";
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped>
+
 </style>
