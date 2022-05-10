@@ -2,13 +2,25 @@
 @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@600&family=Kanit&family=Roboto:ital,wght@1,300&display=swap');
 
 body {
-    background-color: #f8f6f3;
-    color: #6c757d;
-  }
+  // background-color: #f8f6f3;
+  background-image: url('~@/assets/images/896906-01.jpg');
+  background-size: cover;
+  color: #6c757d; 
+}
 
 .error-msg {
-    width: 100%;
-    margin-top: 0.25rem;
-    font-size: 80%;
-    color: #dc3545;
+  width: 100%;
+  margin-top: 0.25rem;
+  font-size: 80%;
+  color: #dc3545;
+}
+
+.innerpage-height {
+  max-height: calc(70vh);
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.innerpage-min-width {
+  min-width: 1200px
 }

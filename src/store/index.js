@@ -29,9 +29,9 @@ export default new Vuex.Store({
       sessionStorage.setItem("token", state.token);
     },
     removeSession(state) {
-      sessionStorage.getItem("userId", state.userId);
-      sessionStorage.getItem("userName", state.userName);
-      sessionStorage.getItem("token", state.token);
+      sessionStorage.removeItem("userId", state.userId);
+      sessionStorage.removeItem("userName", state.userName);
+      sessionStorage.removeItem("token", state.token);
     },
   },
 });

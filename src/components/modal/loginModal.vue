@@ -98,12 +98,18 @@ export default {
       if (this.account) {
         this.accountError = false;
         this.accountErrorMsg = "";
+      }else{
+        this.accountError = true;
+        this.accountErrorMsg = "帳號未填";
       }
     },
     password() {
       if (this.password) {
         this.passwordError = false;
         this.passwordErrorMsg = "";
+      }else{
+        this.passwordError = true;
+        this.passwordErrorMsg = "密碼未填";
       }
     },
   },
