@@ -24,3 +24,7 @@ body {
 .innerpage-min-width {
   min-width: 1200px
 }
+
+.flip-list-move {
+  transition: transform 0.5s;
+}

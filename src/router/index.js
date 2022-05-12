@@ -72,7 +72,10 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   if (to.meta.requireAuth) {
     if (sessionStorage.getItem("token")) {
-      next();
+      store.commit("isLoading", true);
+      setTimeout(() => {
+        next();
+      }, 1000);
     } else {
       alert("請重新登入");
       store.commit("isLoginModalOpen", true);
@@ -80,8 +83,15 @@ router.beforeEach((to, from, next) => {
       next("/");
     }
   } else {
-    next();
+    store.commit("isLoading", true);
+    setTimeout(() => {
+      next();
+    }, 1000);
   }
+});
+
+router.afterEach(function (to) {
+  store.commit("isLoading", false);
 });
 
 //匯出到 main.js

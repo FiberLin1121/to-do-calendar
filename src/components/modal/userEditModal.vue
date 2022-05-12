@@ -10,7 +10,7 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header bg-fourth text-white">
-          <h5 class="modal-title">編輯個人資料</h5>
+          <h5 class="modal-title">修改個人資料</h5>
           <button
             type="button"
             class="close"
@@ -32,7 +32,7 @@
               />
             </div>
             <div class="form-group">
-              <label for="inputEmail1">暱稱</label>
+              <label for="inputName">暱稱</label>
               <input
                 type="text"
                 class="form-control"
@@ -42,22 +42,25 @@
               />
               <div class="error-msg">{{ nameErrorMsg }}</div>
             </div>
-            
-            <div class="form-group">
-              <label for="inputPassword">重設密碼（非必填）</label>
-              <input
-                type="password"
-                class="form-control"
-                :class="{ 'is-invalid': passwordError }"
-                placeholder="請輸入新的密碼"
-                v-model="password"
-              />
-              <div class="error-msg">{{ passwordErrorMsg }}</div>
-            </div>
+            <div class="error-msg">{{ serverErrorMsg }}</div>
           </form>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" @click="closeUserEditModal">取消</button>
+          <a
+            href="#"
+            class="mr-auto"
+            data-dismiss="modal"
+            data-toggle="modal"
+            @click="openResetPasswordModal"
+            >重設密碼</a
+          >
+          <button
+            type="button"
+            class="btn btn-secondary"
+            @click="closeUserEditModal"
+          >
+            取消
+          </button>
           <button
             type="submit"
             class="btn btn-fourth text-white"
@@ -79,11 +82,6 @@ export default {
     return {
       nameError: false,
       nameErrorMsg: "",
-      accountError: false,
-      accountErrorMsg: "",
-      password: "",
-      passwordError: false,
-      passwordErrorMsg: "",
       serverErrorMsg: "",
     };
   },
@@ -91,15 +89,6 @@ export default {
     ...mapState(["userId", "userName"]),
   },
   watch: {
-    userId() {
-      if (this.userId) {
-        this.accountError = false;
-        this.accountErrorMsg = "";
-      } else {
-        this.accountError = true;
-        this.accountErrorMsg = "帳號未填";
-      }
-    },
     userName() {
       if (this.userName) {
         this.nameError = false;
@@ -111,6 +100,9 @@ export default {
     },
   },
   methods: {
+    openResetPasswordModal() {
+      $("#resetPasswordModal").modal({ backdrop: "static", keyboard: false });
+    },
     closeUserEditModal() {
       let self = this;
       self.resetForm();
@@ -121,12 +113,7 @@ export default {
       let validity = true;
       if (!self.userName) {
         self.nameError = true;
-        self.nameErrorMsg = "用戶名未填";
-        validity = false;
-      }
-      if (!self.userId) {
-        self.accountError = true;
-        self.accountErrorMsg = "帳號未填";
+        self.nameErrorMsg = "暱稱未填";
         validity = false;
       }
       return validity;
@@ -135,11 +122,6 @@ export default {
       let self = this;
       self.nameError = false;
       self.nameErrorMsg = "";
-      self.accountError = false;
-      self.accountErrorMsg = "";
-      self.password = "";
-      self.passwordError = false;
-      self.passwordErrorMsg = "";
       self.serverErrorMsg = "";
     },
     submitEvent() {

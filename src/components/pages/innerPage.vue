@@ -25,7 +25,12 @@
           >
             個人資料
           </button>
-          <button class="dropdown-item text-secondary" type="button">
+
+          <button
+            class="dropdown-item text-secondary"
+            type="button"
+            @click="openLabelSettingModal"
+          >
             標籤顏色
           </button>
           <div class="dropdown-divider"></div>
@@ -71,25 +76,35 @@
     <!-- /header -->
 
     <!-- body -->
-    <section class="card-body" style="height: calc(80vh)">
+    <section class="card-body box-shadow" style="height: calc(80vh)">
       <h1 class="card-title"></h1>
       <router-view />
     </section>
     <!-- /body -->
 
     <!-- modal section -->
-    <user-edit-modal @submitEvent="sendEditUser"></user-edit-modal>
+    <user-edit-modal @submitEvent="sendEditUser"> </user-edit-modal>
+    <reset-password-modal
+      @submitEvent="sendResetPassword"
+    ></reset-password-modal>
+    <label-setting-modal
+      @submitEvent="sendEditLabelSetting"
+    ></label-setting-modal>
     <!-- /modal section -->
   </section>
 </template>
 
 <script>
 import userEditModal from "../modal/userEditModal.vue";
+import resetPasswordModal from "../modal/resetPasswordModal.vue";
+import labelSettingModal from "../modal/labelSettingModal.vue";
 
 export default {
   name: "innerPage",
   components: {
     "user-edit-modal": userEditModal,
+    "reset-password-modal": resetPasswordModal,
+    "label-setting-modal": labelSettingModal,
   },
   data() {
     return {};
@@ -98,8 +113,17 @@ export default {
     openUserEditModal() {
       $("#userEditModal").modal({ backdrop: "static", keyboard: false });
     },
-    sendEditUser(){
+    openLabelSettingModal() {
+      $("#labelSettingModal").modal({ backdrop: "static", keyboard: false });
+    },
+    sendEditUser() {
       console.log("sendEditUser");
+    },
+    sendResetPassword() {
+      console.log("sendResetPassword");
+    },
+    sendEditLabelSetting(){
+      console.log("sendEditLabelSetting");
     },
     logout() {
       let self = this;
@@ -118,5 +142,9 @@ export default {
 a {
   color: #5fc6d4;
   background-color: rgb(165 222 229 / 21%);
+}
+
+.box-shadow {
+  box-shadow: 0px 3px 10px 1px #bed7da6b;
 }
 </style>

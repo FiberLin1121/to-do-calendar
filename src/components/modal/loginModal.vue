@@ -151,9 +151,10 @@ export default {
           self.$store.commit("setUserName", "test");
           self.$store.commit("setToken", "123");
           self.$store.commit("setStoreToSession");
+          self.$store.commit("isLoading", true);
           setTimeout(() => {
             self.$router.push("innerPage/todoLists");
-          }, 2000);
+          }, 1000);
         } else {
           self.serverErrorMsg = "帳號或密碼錯誤";
         }

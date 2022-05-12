@@ -21,7 +21,9 @@
     "v-calendar": "^2.4.1",
     "vue": "^2.6.14",
     "vue-axios": "^3.4.1",
+    "vue-loading-overlay": "^3.4.2",
     "vue-router": "^3.3.2",
+    "vuedraggable": "^2.20.0",
     "vuex": "^3.4.0"
   },
   "devDependencies": {
@@ -46,7 +48,9 @@
     "parserOptions": {
       "parser": "@babel/eslint-parser"
     },
-    "rules": {}
+    "rules": {
+      "vue/no-v-model-argument": 0
+    }
   },
   "browserslist": [
     "> 1%",

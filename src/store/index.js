@@ -6,6 +6,7 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     isLoginModalOpen: false,
+    isLoading: false,
     userId: sessionStorage.getItem("userId") || "",
     userName: sessionStorage.getItem("userName") || "",
     token: sessionStorage.getItem("token") || "",
@@ -13,6 +14,9 @@ export default new Vuex.Store({
   mutations: {
     isLoginModalOpen(state, status) {
       state.isLoginModalOpen = status;
+    },
+    isLoading(state, status) {
+      state.isLoading = status;
     },
     setUserId(state, userId) {
       state.userId = userId;

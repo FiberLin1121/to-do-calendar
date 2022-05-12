@@ -12,6 +12,8 @@ import VCalendar from "v-calendar";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import "vue-loading-overlay/dist/vue-loading.css";
+import Loading from "vue-loading-overlay";
 
 window.jQuery = $;
 window.$ = $;
@@ -22,6 +24,7 @@ Vue.use(VueAxios, axios);
 Vue.use(VCalendar);
 Vue.config.productionTip = false;
 Vue.component("font-awesome-icon", FontAwesomeIcon);
+Vue.component("Loading",Loading);
 Vue.use(Vuex);
 
 new Vue({
