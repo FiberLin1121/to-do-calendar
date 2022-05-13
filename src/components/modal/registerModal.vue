@@ -71,8 +71,8 @@
           </button>
           <button
             type="submit"
-            class="btn btn-info text-white"
-            @click="sendUserRegister"
+            class="btn btn-second text-white"
+            @click="submitEvent"
           >
             註冊
           </button>
@@ -85,6 +85,7 @@
 <script>
 export default {
   name: "registerModal",
+  props:["serverErrorMsg"],
   data() {
     return {
       account: "",
@@ -96,7 +97,6 @@ export default {
       password: "",
       passwordError: false,
       passwordErrorMsg: "",
-      serverErrorMsg: "",
     };
   },
   watch: {
@@ -158,13 +158,6 @@ export default {
       }
       return validity;
     },
-    sendUserRegister() {
-      let self = this;
-      if (self.checkRegisterInput()) {
-        //send register API to server
-        self.$router.push("innerPage/todoLists");
-      }
-    },
     resetForm() {
       let self = this;
       self.name = "";
@@ -177,6 +170,12 @@ export default {
       self.passwordError = false;
       self.passwordErrorMsg = "";
       self.serverErrorMsg = "";
+    },
+    submitEvent(){
+      let self = this;
+      if (self.checkRegisterInput()) {
+        self.$emit("submitEvent");
+      }
     },
   },
 };

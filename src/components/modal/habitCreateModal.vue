@@ -9,7 +9,7 @@
   >
     <div class="modal-dialog" role="document">
       <div class="modal-content">
-        <div class="modal-header bg-primary text-white">
+        <div class="modal-header bg-first text-white">
           <h5 class="modal-title">新增原子習慣</h5>
           <button
             type="button"
@@ -23,16 +23,16 @@
         <div class="modal-body">
           <form class="text-left">
             <div class="form-group">
-              <label for="habitName">原子習慣名稱</label>
+              <label for="habitName">原子習慣</label>
               <input
                 type="text"
                 class="form-control"
-                :class="{ 'is-invalid': nameError }"
-                placeholder="請輸入原子習慣名稱"
-                v-model="name"
+                :class="{ 'is-invalid': habitError }"
+                placeholder="請輸入原子習慣"
+                v-model="habit"
                 required
               />
-              <div class="error-msg">{{ nameErrorMsg }}</div>
+              <div class="error-msg">{{ habitErrorMsg }}</div>
             </div>
 
             <div for="checkColorRadio" class="mb-2">圈選日期顏色</div>
@@ -76,10 +76,10 @@
           </button>
           <button
             type="submit"
-            class="btn btn-primary text-white"
+            class="btn btn-first text-white"
             @click="submitEvent"
           >
-            新增
+            儲存
           </button>
         </div>
       </div>
@@ -92,9 +92,9 @@ export default {
   name: "habitCreateModal",
   data() {
     return {
-      name: "",
-      nameError: false,
-      nameErrorMsg: "",
+      habit: "",
+      habitError: false,
+      habitErrorMsg: "",
       checkColor: "",
       checkColorError: false,
       checkColorErrorMsg: "",
@@ -115,13 +115,13 @@ export default {
   },
   mounted() {},
   watch: {
-    name() {
-      if (this.name) {
-        this.nameError = false;
-        this.nameErrorMsg = "";
+    habit() {
+      if (this.habit) {
+        this.habitError = false;
+        this.habitErrorMsg = "";
       } else {
-        this.nameError = true;
-        this.nameErrorMsg = "原子習慣未填";
+        this.habitError = true;
+        this.habitErrorMsg = "原子習慣未填";
       }
     },
     checkColor() {
@@ -139,9 +139,9 @@ export default {
     },
     resetForm() {
       let self = this;
-      self.name = "";
-      self.nameError = false;
-      self.nameErrorMsg = "";
+      self.habit = "";
+      self.habitError = false;
+      self.habitErrorMsg = "";
       self.checkColor = "";
       self.checkColorError = false;
       self.checkColorErrorMsg = "";
@@ -150,9 +150,9 @@ export default {
     checkHabitInput() {
       let self = this;
       let validity = true;
-      if (!self.name) {
-        self.nameError = true;
-        self.nameErrorMsg = "原子習慣未填";
+      if (!self.habit) {
+        self.habitError = true;
+        self.habitErrorMsg = "原子習慣未填";
         validity = false;
       }
       if (!self.checkColor) {

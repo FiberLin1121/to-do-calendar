@@ -303,10 +303,15 @@
     </section>
 
     <!-- modal section -->
-    <login-modal></login-modal>
-    <register-modal></register-modal>
+    <login-modal
+      :serverErrorMsg="serverErrorMsg"
+      @submitEvent="sendUserLogin"
+    ></login-modal>
+    <register-modal
+      :serverErrorMsg="serverErrorMsg"
+      @submitEvent="sendUserRegister"
+    ></register-modal>
     <!-- /modal section -->
-
   </section>
 </template>
 
@@ -324,6 +329,7 @@ export default {
   data() {
     return {
       thisYear: new Date().getFullYear(),
+      serverErrorMsg: "",
     };
   },
   created() {
@@ -354,6 +360,38 @@ export default {
     openLoginModal() {
       let self = this;
       self.$router.push("innerPage/todoLists");
+    },
+    sendUserLogin() {
+      let self = this;
+      let result = true;
+      //send login API to server
+      if (result) {
+        self.$store.commit("isLoginModalOpen", false);
+        self.$store.commit("setUserId", "user01");
+        self.$store.commit("setUserName", "test");
+        self.$store.commit("setToken", "123");
+        self.$store.commit("setStoreToSession");
+        self.$store.commit("isLoading", true);
+        self.$router.push("innerPage/todoLists");
+      } else {
+        self.serverErrorMsg = "帳號或密碼錯誤";
+      }
+    },
+    sendUserRegister() {
+      let self = this;
+      let result = true;
+      //send register API to server
+      if (result) {
+        $("#registerModal").modal("hide");
+        self.$store.commit("setUserId", "user01");
+        self.$store.commit("setUserName", "test");
+        self.$store.commit("setToken", "123");
+        self.$store.commit("setStoreToSession");
+        self.$store.commit("isLoading", true);
+        self.$router.push("innerPage/todoLists");
+      } else {
+        self.serverErrorMsg = "帳號重複";
+      }
     },
   },
 };

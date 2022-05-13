@@ -9,7 +9,7 @@
   >
     <div class="modal-dialog" role="document">
       <div class="modal-content">
-        <div class="modal-header bg-secondary text-white">
+        <div class="modal-header bg-light">
           <h5 class="modal-title">刪除{{modalTitle}}</h5>
           <button
             type="button"
@@ -21,7 +21,7 @@
           </button>
         </div>
         <div class="modal-body">
-          {{modalTitle}}「{{pickedItem.name}}」將被刪除，確定要刪除「{{pickedItem.name}}」嗎？
+          <div class="h6 my-3"><strong>「{{pickedItem.name}}」</strong>將被刪除，確定要刪除「{{pickedItem.name}}」嗎？</div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">

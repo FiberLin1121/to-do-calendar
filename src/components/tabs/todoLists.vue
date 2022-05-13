@@ -15,33 +15,47 @@
 
       <!-- todo lists section -->
       <section class="col-9 innerpage-height">
+        <div class="dot-decoration-header p-5"></div>
         <div class="container">
-          <!-- plus button -->
-          <div class="text-left mb-4">
-            <button type="button" class="btn btn-first text-white">
-              <font-awesome-icon icon="fa-solid fa-plus" />
-            </button>
-          </div>
-          <!-- /plus button -->
           <div class="row">
             <!-- to do section -->
             <div class="col-6">
-              <div class="h2 mb-4">To Do</div>
+              <div class="d-flex text-left mx-4">
+                <!-- plus button -->
+                <div>
+                  <button
+                    type="button"
+                    class="btn btn-first text-white"
+                    @click="openTaskCreateModal"
+                  >
+                    <font-awesome-icon icon="fa-solid fa-plus" />
+                  </button>
+                </div>
+                <!-- /plus button -->
+                <div class="h2 text-black-50 mb-4 mx-4">To Do</div>
+              </div>
 
               <!-- to do list -->
               <draggable
-                v-model="doneList"
+                v-model="todoList"
+                v-bind="dragOptions"
+                @start="drag = true"
+                @end="drag = false"
                 :move="getdata"
                 @update="datadragEnd"
                 class="list-group"
+                group="people"
               >
-                <transition-group type="transition" name="flip-list">
+                <transition-group
+                  type="transition"
+                  name="!drag ? 'flip-list' : null"
+                >
                   <div
                     class="task-label mb-3 mx-4 d-flex"
                     :style="{
-                      borderLeftColor: renderLabelColorValue(item.label),
+                      borderLeftColor: renderLabelColorValue(item.labelType),
                     }"
-                    v-for="item in doneList"
+                    v-for="item in todoList"
                     :key="item.id"
                   >
                     <div class="form-group form-check d-flex">
@@ -54,7 +68,7 @@
                         class="form-check-label align-self-center"
                         :for="item.id"
                         :style="{
-                          color: renderLabelColorValue(item.label),
+                          color: renderLabelColorValue(item.labelType),
                         }"
                       >
                         {{ item.name }}
@@ -66,6 +80,7 @@
                         <button
                           type="button"
                           class="btn btn-second text-secondary"
+                          @click="openTaskEditModal(item)"
                         >
                           <font-awesome-icon
                             icon="fa-solid fa-pen"
@@ -75,6 +90,7 @@
                         <button
                           type="button"
                           class="btn btn-secondary text-white"
+                          @click="openTaskDeleteModal(item)"
                         >
                           <font-awesome-icon
                             icon="fa-solid fa-trash-can"
@@ -93,18 +109,23 @@
 
             <!-- done section -->
             <div class="col-6">
-              <div class="h2 mb-4">Done</div>
+              <div class="h2 text-info text-left mb-4 mx-4">Done</div>
               <!-- done list -->
               <draggable
-                v-model="todoList"
+                v-model="doneList"
+                v-bind="dragOptions"
+                @start="drag = true"
+                @end="drag = false"
                 :move="getdata"
                 @update="datadragEnd"
                 class="list-group"
+                group="people"
               >
-                <transition-group type="transition" name="flip-list">
+                <transition-group type="transition" name="!drag ? 'flip-list' : null">
                   <div
                     class="task-label mb-3 mx-4 d-flex bg-done"
-                    v-for="item in todoList"
+                    style="border-left-color: #93d2d6"
+                    v-for="item in doneList"
                     :key="item.id"
                   >
                     <div class="form-group form-check d-flex">
@@ -112,12 +133,13 @@
                         type="checkbox"
                         class="form-check-input align-self-center"
                         :id="item.id"
+                        checked
                       />
                       <label
                         class="form-check-label align-self-center"
                         :for="item.id"
                         :style="{
-                          color: renderLabelColorValue(item.label),
+                          color: renderLabelColorValue(item.labelType),
                         }"
                       >
                         {{ item.name }}
@@ -129,6 +151,7 @@
                         <button
                           type="button"
                           class="btn btn-second text-secondary"
+                          @click="openTaskEditModal(item)"
                         >
                           <font-awesome-icon
                             icon="fa-solid fa-pen"
@@ -138,6 +161,7 @@
                         <button
                           type="button"
                           class="btn btn-secondary text-white"
+                          @click="openTaskDeleteModal(item)"
                         >
                           <font-awesome-icon
                             icon="fa-solid fa-trash-can"
@@ -158,14 +182,35 @@
       </section>
       <!-- /todo lists section -->
     </section>
+
+    <!-- modal section -->
+    <task-create-modal @submitEvent="sendCreateTask"></task-create-modal>
+    <task-edit-modal
+      @submitEvent="sendEditTask"
+      :pickedTask="pickedTask"
+    ></task-edit-modal>
+    <delete-modal
+      :pickedItem="pickedTask"
+      :modalTitle="modalTitle"
+      @submitEvent="sendDeleteTask"
+    >
+    </delete-modal>
+    <!-- /modal section -->
   </section>
 </template>
 
 
 <script>
+import taskCreateModal from "../modal/taskCreateModal.vue";
+import taskEditModal from "../modal/taskEditModal.vue";
+import deleteModal from "../modal/common/deledeModal.vue";
 import draggable from "vuedraggable";
+
 export default {
   components: {
+    "task-create-modal": taskCreateModal,
+    "task-edit-modal": taskEditModal,
+    "delete-modal": deleteModal,
     draggable: draggable,
   },
   data() {
@@ -176,20 +221,55 @@ export default {
         mask: "YYYY-MM-DD",
       },
       todoList: [
-        { id: "TA01", name: "代辦事項1", label: "firstColor" },
-        { id: "TA02", name: "代辦事項2", label: "secondColor" },
-        { id: "TA03", name: "代辦事項3", label: "thirdColor" },
-        { id: "TA04", name: "代辦事項4", label: "fourthColor" },
+        { id: "TA01", name: "代辦事項1", labelType: "firstColor" },
+        { id: "TA02", name: "代辦事項2", labelType: "secondColor" },
+        { id: "TA03", name: "代辦事項3", labelType: "thirdColor" },
+        { id: "TA04", name: "代辦事項4", labelType: "fourthColor" },
       ],
-       doneList: [
-        { id: "TA01", name: "代辦事項1", label: "firstColor" },
-        { id: "TA02", name: "代辦事項2", label: "secondColor" },
-        { id: "TA03", name: "代辦事項3", label: "thirdColor" },
-        { id: "TA04", name: "代辦事項4", label: "fourthColor" },
+      doneList: [
+        { id: "TA01", name: "完成事項1", labelType: "firstColor" },
+        { id: "TA02", name: "完成事項2", labelType: "secondColor" },
+        { id: "TA03", name: "完成事項3", labelType: "thirdColor" },
+        { id: "TA04", name: "完成事項4", labelType: "fourthColor" },
       ],
+      pickedTask: {},
+      modalTitle: "代辦事項",
+      drag: false,
     };
   },
+  computed: {
+    dragOptions() {
+      return {
+        animation: 200,
+        group: "description",
+        disabled: false,
+        ghostClass: "ghost",
+      };
+    },
+  },
   methods: {
+    openTaskCreateModal() {
+      $("#taskCreateModal").modal({ backdrop: "static", keyboard: false });
+    },
+    openTaskEditModal(item) {
+      let self = this;
+      self.pickedTask = item;
+      $("#taskEditModal").modal({ backdrop: "static", keyboard: false });
+    },
+    openTaskDeleteModal(item) {
+      let self = this;
+      self.pickedTask = item;
+      $("#deleteModal").modal({ backdrop: "static", keyboard: false });
+    },
+    sendCreateTask() {
+      console.log("sendCreateTask");
+    },
+    sendEditTask() {
+      console.log("sendEditTask");
+    },
+    sendDeleteTask() {
+      console.log("sendDeleteTask");
+    },
     getdata(evt) {
       console.log(evt.draggedContext.element.id);
     },
@@ -244,7 +324,11 @@ export default {
   min-width: 400px;
 }
 
-.bg-done{
-  background-color: rgba(220, 220, 220, 0.26);
+.bg-done {
+  background-color: #cfeaec21;
+}
+
+.task-label:hover {
+  background-color: #f8f9fa;
 }
 </style>

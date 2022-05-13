@@ -9,7 +9,7 @@
   >
     <div class="modal-dialog" role="document">
       <div class="modal-content">
-        <div class="modal-header bg-primary text-white">
+        <div class="modal-header bg-first text-white">
           <h5 class="modal-title">登入</h5>
           <button
             type="button"
@@ -68,8 +68,8 @@
           </button>
           <button
             type="submit"
-            class="btn btn-primary text-white"
-            @click="sendUserLogin"
+            class="btn btn-first text-white"
+            @click="submitEvent"
           >
             登入
           </button>
@@ -82,6 +82,7 @@
 <script>
 export default {
   name: "loginModal",
+  props: ["serverErrorMsg"],
   data() {
     return {
       account: "",
@@ -90,7 +91,6 @@ export default {
       password: "",
       passwordError: false,
       passwordErrorMsg: "",
-      serverErrorMsg: "",
     };
   },
   watch: {
@@ -98,7 +98,7 @@ export default {
       if (this.account) {
         this.accountError = false;
         this.accountErrorMsg = "";
-      }else{
+      } else {
         this.accountError = true;
         this.accountErrorMsg = "帳號未填";
       }
@@ -107,7 +107,7 @@ export default {
       if (this.password) {
         this.passwordError = false;
         this.passwordErrorMsg = "";
-      }else{
+      } else {
         this.passwordError = true;
         this.passwordErrorMsg = "密碼未填";
       }
@@ -140,26 +140,6 @@ export default {
       }
       return validity;
     },
-    sendUserLogin() {
-      let self = this;
-      let result = true;
-      if (self.checkLoginInput()) {
-        //send login API to server
-        if (result) {
-          self.$store.commit("isLoginModalOpen", false);
-          self.$store.commit("setUserId", "user01");
-          self.$store.commit("setUserName", "test");
-          self.$store.commit("setToken", "123");
-          self.$store.commit("setStoreToSession");
-          self.$store.commit("isLoading", true);
-          setTimeout(() => {
-            self.$router.push("innerPage/todoLists");
-          }, 1000);
-        } else {
-          self.serverErrorMsg = "帳號或密碼錯誤";
-        }
-      }
-    },
     resetForm() {
       let self = this;
       self.account = "";
@@ -169,6 +149,12 @@ export default {
       self.passwordError = false;
       self.passwordErrorMsg = "";
       self.serverErrorMsg = "";
+    },
+    submitEvent() {
+      let self = this;
+      if (self.checkLoginInput()) {
+        self.$emit("submitEvent");
+      }
     },
   },
 };

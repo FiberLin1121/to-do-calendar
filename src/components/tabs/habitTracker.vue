@@ -19,11 +19,14 @@
           <!-- list group -->
           <draggable
             v-model="habitList"
+            v-bind="dragOptions"
+            @start="drag = true"
+            @end="drag = false"
             :move="getdata"
             @update="datadragEnd"
             class="list-group"
           >
-            <transition-group type="transition" name="flip-list">
+            <transition-group type="transition" name="!drag ? 'flip-list' : null">
               <li
                 v-for="item in habitList"
                 :key="item.id"
@@ -42,7 +45,7 @@
                     <button
                       type="button"
                       class="btn btn-second text-secondary"
-                      @click="openHabitEditModal"
+                      @click="openHabitEditModal(item)"
                     >
                       <font-awesome-icon
                         icon="fa-solid fa-pen"
@@ -52,7 +55,7 @@
                     <button
                       type="button"
                       class="btn btn-secondary text-white"
-                      @click="openDeleteModal"
+                      @click="openDeleteModal(item)"
                     >
                       <font-awesome-icon
                         icon="fa-solid fa-trash-can"
@@ -72,6 +75,7 @@
 
       <!-- year calendar section -->
       <section class="col-9 innerpage-height">
+        <div class="dot-decoration-header p-5"></div>
         <!-- <p>{{ pickedDays }}</p> -->
         <v-calendar
           :step="12"
@@ -83,6 +87,7 @@
           v-model="pickedDays"
           :model-config="modelConfig"
         />
+        <div class="dot-decoration-footer p-5"></div>
       </section>
       <!-- /year calendar section -->
     </section>
@@ -135,8 +140,9 @@ export default {
         { id: "6", name: "12點前就寢", checkColor: "pink" },
         { id: "7", name: "戴維持器", checkColor: "pink" },
       ],
-      pickedHabit: { name: "test", checkColor: "pink" },
+      pickedHabit: {},
       modalTitle: "原子習慣",
+      drag: false,
     };
   },
   mounted() {},
@@ -153,6 +159,14 @@ export default {
         dates: date,
       }));
     },
+    dragOptions() {
+      return {
+        animation: 200,
+        group: "description",
+        disabled: false,
+        ghostClass: "ghost"
+      };
+    }
   },
   watch: {
     date: function () {
@@ -163,10 +177,14 @@ export default {
     openHabitCreateModal() {
       $("#habitCreateModal").modal({ backdrop: "static", keyboard: false });
     },
-    openHabitEditModal() {
+    openHabitEditModal(item) {
+      let self = this;
+      self.pickedHabit = item;
       $("#habitEditModal").modal({ backdrop: "static", keyboard: false });
     },
-    openDeleteModal() {
+    openDeleteModal(item) {
+      let self = this;
+      self.pickedHabit = item;
       $("#deleteModal").modal({ backdrop: "static", keyboard: false });
     },
     onDayClick(day) {

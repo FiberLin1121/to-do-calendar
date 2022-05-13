@@ -1,21 +1,21 @@
 <template>
   <div
     class="modal fade"
-    id="habitEditModal"
+    id="taskEditModal"
     tabindex="-1"
     role="dialog"
-    aria-labelledby="hahabitEditModalLabel"
+    aria-labelledby="taskEditModalLabel"
     aria-hidden="true"
   >
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header bg-second text-white">
-          <h5 class="modal-title">修改原子習慣</h5>
+          <h5 class="modal-title">編輯代辦事項</h5>
           <button
             type="button"
             class="close"
             aria-label="Close"
-            @click="closeHabitEditModal"
+            @click="closeTaskEditModal"
           >
             <span aria-hidden="true">&times;</span>
           </button>
@@ -23,19 +23,19 @@
         <div class="modal-body">
           <form class="text-left">
             <div class="form-group">
-              <label for="habitName">原子習慣</label>
+              <label for="taskName">待辦事項</label>
               <input
                 type="text"
                 class="form-control"
-                :class="{ 'is-invalid': habitError }"
-                placeholder="請輸入原子習慣"
+                :class="{ 'is-invalid': taskError }"
+                placeholder="請輸入待辦事項"
+                v-model="pickedTask.name"
                 required
-                v-model="pickedHabit.name"
               />
-              <div class="error-msg">{{ habitErrorMsg }}</div>
+              <div class="error-msg">{{ taskErrorMsg }}</div>
             </div>
 
-            <div for="checkColorRadio" class="mb-2">圈選日期顏色</div>
+            <div for="checkColorRadio" class="mb-2">標籤顏色</div>
             <div class="container">
               <div class="row d-flex">
                 <div
@@ -50,7 +50,7 @@
                     :id="item.id"
                     name="radio-stacked"
                     :value="item.name"
-                    v-model="pickedHabit.checkColor"
+                    v-model="pickedTask.labelType"
                     required
                   />
                   <label
@@ -64,14 +64,13 @@
 
             <div class="error-msg">{{ checkColorErrorMsg }}</div>
             <div class="error-msg">{{ serverErrorMsg }}</div>
-
           </form>
         </div>
         <div class="modal-footer">
           <button
             type="button"
             class="btn btn-secondary"
-            @click="closeHabitEditModal"
+            @click="closeTaskEditModal"
           >
             取消
           </button>
@@ -90,80 +89,74 @@
 
 <script>
 export default {
-  name: "habitEditModal",
-  props: ["pickedHabit"],
+  name: "taskCreateModal",
+  props:["pickedTask"],
   data() {
     return {
-      habitError: false,
-      habitErrorMsg: "",
+      taskError: false,
+      taskErrorMsg: "",
       checkColorError: false,
       checkColorErrorMsg: "",
       serverErrorMsg: "",
       colorList: [
-        { id: "EC1", name: "pink", value: "#d53f8c" },
-        { id: "EC2", name: "red", value: "#e53e3e" },
-        { id: "EC3", name: "orange", value: "#dd6b20" },
-        { id: "EC4", name: "yellow", value: "#d69e2e" },
-        { id: "EC5", name: "green", value: "#38a169" },
-        { id: "EC6", name: "teal", value: "#319795" },
-        { id: "EC7", name: "blue", value: "#3182ce" },
-        { id: "EC8", name: "indigo", value: "#5a67d8" },
-        { id: "EC9", name: "purple", value: "#805ad5" },
-        { id: "EC10", name: "gray", value: "#718096" },
+        { id: "TE1", name: "firstColor", value: "#e53e3e" },
+        { id: "TE2", name: "secondColor", value: "#dd6b20" },
+        { id: "TE3", name: "thirdColor", value: "#d69e2e" },
+        { id: "TE4", name: "fourthColor", value: "#38a169" },
       ],
     };
   },
   mounted() {},
   watch: {
-    "pickedHabit.name"() {
-      if (this.pickedHabit.name) {
-        this.habitError = false;
-        this.habitErrorMsg = "";
-      }else{
-        this.habitError = true;
-        this.habitErrorMsg = "原子習慣未填";
+    "pickedTask.name"() {
+      if (this.pickedTask.name) {
+        this.taskError = false;
+        this.taskErrorMsg = "";
+      } else {
+        this.taskError = true;
+        this.taskErrorMsg = "代辦事項未填";
       }
     },
-      "pickedHabit.checkColor"() {
-      if (this.pickedHabit.checkColor) {
+    "pickedTask.labelType"(){
+      if (this.pickedTask.labelType) {
         this.checkColorError = false;
         this.checkColorErrorMsg = "";
       }
     },
   },
   methods: {
-    closeHabitEditModal() {
+    closeTaskEditModal() {
       let self = this;
       self.resetForm();
-      $("#habitEditModal").modal("hide");
-    },
-    checkHabitInput() {
-      let self = this;
-      let validity = true;
-      if (!self.pickedHabit.name) {
-        self.habitError = true;
-        self.habitErrorMsg = "原子習慣未填";
-        validity = false;
-      }
-      if (!self.pickedHabit.checkColor) {
-        self.checkColorError = true;
-        self.checkColorErrorMsg = "日期顏色未選";
-        validity = false;
-      }
-      return validity;
+      $("#taskEditModal").modal("hide");
     },
     resetForm() {
       let self = this;
-      self.habitError = false;
-      self.habitErrorMsg = "";
+      self.taskError = false;
+      self.taskErrorMsg = "";
       self.checkColorError = false;
       self.checkColorErrorMsg = "";
       self.serverErrorMsg = "";
     },
+    checkTaskInput() {
+      let self = this;
+      let validity = true;
+      if (!self.pickedTask.name) {
+        self.taskError = true;
+        self.taskErrorMsg = "代辦事項未填";
+        validity = false;
+      }
+      if (!self.pickedTask.labelType) {
+        self.checkColorError = true;
+        self.checkColorErrorMsg = "標籤顏色未選";
+        validity = false;
+      }
+      return validity;
+    },
     submitEvent() {
-      let selt = this;
-      if (selt.checkHabitInput()) {
-        selt.$emit("submitEvent");
+      let self = this;
+      if (self.checkTaskInput()) {
+        self.$emit("submitEvent");
       }
     },
   },

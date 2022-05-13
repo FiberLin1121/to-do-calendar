@@ -28,3 +28,15 @@ body {
 .flip-list-move {
   transition: transform 0.5s;
 }
+
+.dot-decoration-header {
+  background-image: url("~@/assets/images/78c0332b18292f9cc7dd7d9a371e6b70-01.png");
+  background-size: 80%;
+  background-position: top;
+}
+
+.dot-decoration-footer {
+  background-image: url("~@/assets/images/78c0332b18292f9cc7dd7d9a371e6b70-02.png");
+  background-size: 80%;
+  background-position: bottom ;
+}
