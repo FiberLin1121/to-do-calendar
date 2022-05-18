@@ -2,8 +2,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@600&family=Kanit&family=Roboto:ital,wght@1,300&display=swap');
 
 body {
-  // background-color: #f8f6f3;
-  background-image: url('~@/assets/images/896906-01.jpg');
+  background-image: url('~@/assets/images/straight-stripes-background.jpg');
   background-size: cover;
   color: #6c757d; 
 }
@@ -30,13 +29,13 @@ body {
 }
 
 .dot-decoration-header {
-  background-image: url("~@/assets/images/78c0332b18292f9cc7dd7d9a371e6b70-01.png");
+  background-image: url("~@/assets/images/dot-decoration-header.png");
   background-size: 80%;
   background-position: top;
 }
 
 .dot-decoration-footer {
-  background-image: url("~@/assets/images/78c0332b18292f9cc7dd7d9a371e6b70-02.png");
+  background-image: url("~@/assets/images/dot-decoration-footer.png");
   background-size: 80%;
   background-position: bottom ;
 }

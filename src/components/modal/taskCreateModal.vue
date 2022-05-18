@@ -113,9 +113,6 @@ export default {
       if (this.task) {
         this.taskError = false;
         this.taskErrorMsg = "";
-      } else {
-        this.taskError = true;
-        this.taskErrorMsg = "代辦事項未填";
       }
     },
     checkColor() {

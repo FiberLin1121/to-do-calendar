@@ -112,9 +112,6 @@ export default {
       if (this.pickedTask.name) {
         this.taskError = false;
         this.taskErrorMsg = "";
-      } else {
-        this.taskError = true;
-        this.taskErrorMsg = "代辦事項未填";
       }
     },
     "pickedTask.labelType"(){

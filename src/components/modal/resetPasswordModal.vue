@@ -111,27 +111,18 @@ export default {
       if (this.oldPassword) {
         this.oldPasswordError = false;
         this.oldPasswordErrorMsg = "";
-      } else {
-        this.oldPasswordError = true;
-        this.oldPasswordErrorMsg = "舊密碼未填";
       }
     },
     newPassword() {
       if (this.newPassword) {
         this.newPasswordError = false;
         this.newPasswordErrorMsg = "";
-      } else {
-        this.newPasswordError = true;
-        this.newPasswordErrorMsg = "新密碼未填";
       }
     },
     confirmPassword() {
       if (this.confirmPassword) {
         this.confirmPasswordError = false;
         this.confirmPasswordErrorMsg = "";
-      } else {
-        this.confirmPasswordError = true;
-        this.confirmPasswordErrorMsg = "確認密碼未填";
       }
     },
   },

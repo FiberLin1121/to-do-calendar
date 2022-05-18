@@ -26,7 +26,10 @@
             @update="datadragEnd"
             class="list-group"
           >
-            <transition-group type="transition" name="!drag ? 'flip-list' : null">
+            <transition-group
+              type="transition"
+              name="!drag ? 'flip-list' : null"
+            >
               <li
                 v-for="item in habitList"
                 :key="item.id"
@@ -164,9 +167,9 @@ export default {
         animation: 200,
         group: "description",
         disabled: false,
-        ghostClass: "ghost"
+        ghostClass: "ghost",
       };
-    }
+    },
   },
   watch: {
     date: function () {
@@ -187,6 +190,15 @@ export default {
       self.pickedHabit = item;
       $("#deleteModal").modal({ backdrop: "static", keyboard: false });
     },
+    sendCreateHabit() {
+      console.log("sendCreateHabit");
+    },
+    sendEditHabit() {
+      console.log("sendEditHabit");
+    },
+    sendDeleteHabit() {
+      console.log("sendDeleteHabit");
+    },
     onDayClick(day) {
       let idx = this.pickedDays.findIndex((d) => d.id === day.id);
       if (idx >= 0) {
@@ -197,15 +209,6 @@ export default {
           date: day.date,
         });
       }
-    },
-    sendCreateHabit() {
-      console.log("sendCreateHabit");
-    },
-    sendEditHabit() {
-      console.log("sendEditHabit");
-    },
-    sendDeleteHabit() {
-      console.log("sendDeleteHabit");
     },
     getdata(evt) {
       console.log(evt.draggedContext.element.id);

@@ -93,9 +93,6 @@ export default {
       if (this.userName) {
         this.nameError = false;
         this.nameErrorMsg = "";
-      } else {
-        this.nameError = true;
-        this.nameErrorMsg = "暱稱未填";
       }
     },
   },

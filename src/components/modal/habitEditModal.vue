@@ -119,9 +119,6 @@ export default {
       if (this.pickedHabit.name) {
         this.habitError = false;
         this.habitErrorMsg = "";
-      }else{
-        this.habitError = true;
-        this.habitErrorMsg = "原子習慣未填";
       }
     },
       "pickedHabit.checkColor"() {

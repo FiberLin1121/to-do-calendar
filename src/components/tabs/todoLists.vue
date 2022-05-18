@@ -44,7 +44,7 @@
                 :move="getdata"
                 @update="datadragEnd"
                 class="list-group"
-                group="people"
+                group="task"
               >
                 <transition-group
                   type="transition"
@@ -119,9 +119,12 @@
                 :move="getdata"
                 @update="datadragEnd"
                 class="list-group"
-                group="people"
+                group="task"
               >
-                <transition-group type="transition" name="!drag ? 'flip-list' : null">
+                <transition-group
+                  type="transition"
+                  name="!drag ? 'flip-list' : null"
+                >
                   <div
                     class="task-label mb-3 mx-4 d-flex bg-done"
                     style="border-left-color: #93d2d6"
@@ -186,8 +189,8 @@
     <!-- modal section -->
     <task-create-modal @submitEvent="sendCreateTask"></task-create-modal>
     <task-edit-modal
-      @submitEvent="sendEditTask"
       :pickedTask="pickedTask"
+      @submitEvent="sendEditTask"
     ></task-edit-modal>
     <delete-modal
       :pickedItem="pickedTask"
@@ -234,7 +237,6 @@ export default {
       ],
       pickedTask: {},
       modalTitle: "代辦事項",
-      drag: false,
     };
   },
   computed: {
@@ -276,7 +278,6 @@ export default {
     datadragEnd(evt) {
       console.log("拖動前的索引 :" + evt.oldIndex);
       console.log("拖動後的索引 :" + evt.newIndex);
-      console.log(this.tags);
     },
     renderLabelColorValue(color) {
       let value = "";
@@ -326,6 +327,7 @@ export default {
 
 .bg-done {
   background-color: #cfeaec21;
+  text-decoration: line-through;
 }
 
 .task-label:hover {
