@@ -303,6 +303,16 @@
       <!-- /calendar square section -->
     </section>
 
+    <!-- material animation section -->
+    <div class="material-1 rounded-circle"></div>
+    <div class="material-2 rounded-circle"></div>
+    <div class="material-3 rounded-circle"></div>
+    <div class="material-4 rounded-circle"></div>
+    <div class="material-5 rounded-circle"></div>
+    <div class="material-6 rounded-circle"></div>
+    <div class="material-7 rounded-circle"></div>
+    <!-- /material animation section -->
+
     <!-- modal section -->
     <login-modal
       :serverErrorMsg="serverErrorMsg"
@@ -433,6 +443,101 @@ html * {
 .square-month {
   width: 90px;
   height: 90px;
+}
+
+.material-1 {
+  position: absolute;
+  top: 43%;
+  left: 73%;
+  transform: translateX(-50%);
+  animation: material 2s ease-in infinite;
+  width: 100px;
+  height: 100px;
+  background : url("~@/assets/images/22573317-04.png") repeat center center;
+}
+
+.material-2 {
+  position: absolute;
+  top: 10%;
+  left: 13%;
+  transform: translateX(-50%);
+  animation: material 2s ease-in infinite;
+  width: 150px;
+  height: 150px;
+  background : url("~@/assets/images/22573317-01.png") repeat center center;
+  animation-delay: 0.5s;
+}
+
+.material-3 {
+  position: absolute;
+  top: 83%;
+  left: 38%;
+  transform: translateX(-50%);
+  animation: material 2s ease-in infinite;
+  width: 100px;
+  height: 100px;
+  background : url("~@/assets/images/22573317-01.png") repeat center center;
+   animation-delay: 1.5s;
+}
+
+.material-4 {
+  position: absolute;
+  top: 0%;
+  left: 60%;
+  transform: translateX(-50%);
+  animation: material 2s ease-in infinite;
+  width: 100px;
+  height: 100px;
+  background : url("~@/assets/images/22573317-01.png") repeat center center;
+  animation-delay: 0.2s;
+}
+
+.material-5 {
+  position: absolute;
+  top: 50%;
+  left: 5%;
+  transform: translateX(-50%);
+  animation: material 2s ease-in infinite;
+  width: 200px;
+  height: 200px;
+  background : url("~@/assets/images/22573317-04.png") repeat center center;
+  animation-delay: 1.1s;
+}
+
+.material-6 {
+  position: absolute;
+  top: 10%;
+  left: 85%;
+  transform: translateX(-50%);
+  animation: material 2s ease-in infinite;
+  width: 200px;
+  height: 200px;
+  background : url("~@/assets/images/22573317-03.png") repeat center center;
+  animation-delay: 0.8s;
+}
+
+.material-7 {
+  position: absolute;
+  top: 70%;
+  left: 90%;
+  transform: translateX(-50%);
+  animation: material 2s ease-in infinite;
+  width: 100px;
+  height: 100px;
+  background : url("~@/assets/images/22573317-01.png") repeat center center;
+  animation-delay: 1.8s;
+}
+
+@keyframes material {
+  0% {
+    opacity: 0;
+  }
+  50%{
+    opacity: 1;
+  }
+  100%{
+    opacity: 0;
+  }
 }
 
 </style>
