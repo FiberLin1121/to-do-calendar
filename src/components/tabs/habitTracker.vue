@@ -1,5 +1,5 @@
 <template>
-  <section class="container-fuild innerpage-min-width">
+  <section class="container-fuild innerpage-min-width tracking-in-expand">
     <section class="row">
       <!-- habit list section -->
       <section class="col-3 innerpage-height">
@@ -34,7 +34,7 @@
                 v-for="item in habitList"
                 :key="item.id"
                 class="
-                  list-group-item list-group-item-action
+                  list-group-item
                   d-flex
                   justify-content-between
                   align-items-center
@@ -164,10 +164,9 @@ export default {
     },
     dragOptions() {
       return {
-        animation: 200,
-        group: "description",
+        animation: 300,
         disabled: false,
-        ghostClass: "ghost",
+        chosenClass:"chosen",
       };
     },
   },
@@ -224,4 +223,9 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.chosen {
+  border: dashed 2px #a5dee5;
+  background-color: #e4f5f9;
+}
+
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <section class="container-fuild innerpage-min-width">
+  <section class="container-fuild innerpage-min-width tracking-in-expand">
     <section class="row">
       <!-- monthly calender section -->
       <section class="col-3 innerpage-height">
@@ -44,7 +44,6 @@
                 :move="getdata"
                 @update="datadragEnd"
                 class="list-group"
-                group="task"
               >
                 <transition-group
                   type="transition"
@@ -119,7 +118,6 @@
                 :move="getdata"
                 @update="datadragEnd"
                 class="list-group"
-                group="task"
               >
                 <transition-group
                   type="transition"
@@ -242,10 +240,10 @@ export default {
   computed: {
     dragOptions() {
       return {
-        animation: 200,
-        group: "description",
+        animation: 300,
+        group: "task",
         disabled: false,
-        ghostClass: "ghost",
+        chosenClass: "chosen",
       };
     },
   },
@@ -330,7 +328,8 @@ export default {
   text-decoration: line-through;
 }
 
-.task-label:hover {
-  background-color: #f8f9fa;
+.chosen {
+  border: dashed 2px #f5cacf;
+  background-color: #fff5f6;
 }
 </style>

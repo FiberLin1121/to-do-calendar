@@ -7,8 +7,8 @@
           class="row flex-column justify-content-center align-items-center"
           style="height: calc(100vh)"
         >
-          <div class="title-have-a-nice-day">\ Have a nice day ! /</div>
-          <div class="title-hello text-first mt-2"><strong>Hello</strong></div>
+          <div class="title-have-a-nice-day ">\ Have a nice day ! /</div>
+          <div class="title-hello text-first mt-2 tracking-in-expand"><strong>Hello</strong></div>
           <div class="title-todo-Calendar mb-5">To-do Calendar</div>
 
           <!-- Button trigger modal -->
@@ -24,6 +24,7 @@
               align-items-center
               start-buttom
               rounded-circle
+              bounce-in-top
             "
           >
             <span class="h3 text-white">Get Started</span>
@@ -32,7 +33,6 @@
               size="2x"
               class="text-white"
             />
-            <i class="fa-solid fa-calendar-check"></i>
           </button>
           <!-- /Button trigger modal -->
         </div>
@@ -40,7 +40,7 @@
       <!-- /title & entry button section -->
 
       <!-- calendar square section -->
-      <section class="col-lg-8">
+      <section class="col-lg-8 tracking-in-expand">
         <div class="row">
           <div class="col-md-6 d-none d-md-block">
             <div
@@ -55,10 +55,11 @@
                   align-self-center
                   text-center text-white
                   m-4
+                  flip-horizontal-top
                 "
               >
                 <div class="display-4">{{ thisYear }}</div>
-                <div class="mb-1" style="font-size: 1.3rem">Calendar</div>
+                <div class="mb-1" style="font-size: 1.3rem">Calendar</div> 
                 <div class="d-flex justify-content-between">
                   <span></span>
                   <span>M</span>
@@ -433,4 +434,5 @@ html * {
   width: 90px;
   height: 90px;
 }
+
 </style>

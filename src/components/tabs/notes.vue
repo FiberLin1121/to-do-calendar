@@ -1,5 +1,5 @@
 <template>
-  <section class="container-fuild innerpage-min-width innerpage-height">
+  <section class="container-fuild innerpage-min-width innerpage-height tracking-in-expand">
     <div class="dot-decoration-header p-5"></div>
     <!-- plus button -->
     <div class="text-left mb-5">
@@ -365,10 +365,10 @@ export default {
   computed: {
     dragOptions() {
       return {
-        animation: 200,
-        group: "description",
+        animation: 300,
+        group: "note",
         disabled: false,
-        ghostClass: "ghost",
+        chosenClass: "chosen",
       };
     },
   },
@@ -439,5 +439,9 @@ pre {
   height: 40px;
   transform: rotate(2deg);
   background-position: center center;
+}
+
+.chosen {
+  border: dashed 3px #f0a9b2;
 }
 </style>
