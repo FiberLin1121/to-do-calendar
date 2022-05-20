@@ -3,6 +3,20 @@
     <section class="row">
       <!-- monthly calender section -->
       <section class="col-3 innerpage-height">
+        <div class="btn-group btn-group-sm my-4" role="group">
+          <button type="button" class="btn btn-outline-secondary">
+            全部
+            <span class="badge badge-light">{{
+              todoList.length + doneList.length
+            }}</span>
+          </button>
+          <button type="button" class="btn btn-outline-secondary">
+            未完成 <span class="badge badge-light">{{ todoList.length }}</span>
+          </button>
+          <button type="button" class="btn btn-outline-secondary">
+            已完成 <span class="badge badge-first">{{ doneList.length }} </span>
+          </button>
+        </div>
         <v-date-picker
           :rows="2"
           mode="date"
@@ -32,7 +46,7 @@
                   </button>
                 </div>
                 <!-- /plus button -->
-                <div class="h2 text-black-50 mb-4 mx-4">To Do</div>
+                <h2 class="h2 text-black-50 mb-4 mx-4">To Do</h2>
               </div>
 
               <!-- to do list -->
@@ -108,7 +122,21 @@
 
             <!-- done section -->
             <div class="col-6">
-              <div class="h2 text-info text-left mb-4 mx-4">Done</div>
+              <div class="h2 text-info text-left mb-4 mx-4">
+                Done
+                <font-awesome-icon
+                  v-if="
+                    doneList.length >= (todoList.length + doneList.length) / 2 && (doneList.length != todoList.length + doneList.length && todoList.length!=0)
+                  "
+                  icon="fa-solid fa-star-half-stroke"
+                  class="text-warning"
+                />
+                <font-awesome-icon
+                  v-if="doneList.length == todoList.length + doneList.length"
+                  icon="fa-solid fa-star"
+                  class="text-warning"
+                />
+              </div>
               <!-- done list -->
               <draggable
                 v-model="doneList"
