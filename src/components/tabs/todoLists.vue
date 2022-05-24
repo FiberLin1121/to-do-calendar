@@ -1,6 +1,6 @@
 <template>
-  <section class="container-fuild innerpage-min-width tracking-in-expand">
-    <section class="row">
+  <section class="container-fuild innerpage-min-width">
+    <section class="row tracking-in-expand">
       <!-- monthly calender section -->
       <section class="col-3 innerpage-height">
         <div class="btn-group btn-group-sm my-4" role="group">

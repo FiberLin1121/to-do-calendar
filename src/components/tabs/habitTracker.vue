@@ -1,6 +1,6 @@
 <template>
-  <section class="container-fuild innerpage-min-width tracking-in-expand">
-    <section class="row">
+  <section class="container-fuild innerpage-min-width">
+    <section class="row tracking-in-expand">
       <!-- habit list section -->
       <section class="col-3 innerpage-height">
         <div class="container">
@@ -128,7 +128,7 @@ export default {
     return {
       checkColor: "teal",
       thisYear: new Date().getFullYear(),
-      pickedDays: [],
+      pickedDays: ["2022-05-05"],
       date: new Date(),
       modelConfig: {
         type: "string",

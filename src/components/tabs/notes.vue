@@ -1,5 +1,5 @@
 <template>
-  <section class="container-fuild innerpage-min-width innerpage-height tracking-in-expand">
+  <section class="container-fuild innerpage-min-width innerpage-height">
     <div class="dot-decoration-header p-5"></div>
     <!-- plus button -->
     <div class="text-left mb-5">
@@ -12,7 +12,7 @@
       </button>
     </div>
     <!-- /plus button -->
-    <div class="row">
+    <div class="row tracking-in-expand">
       <div class="col-3">
         <draggable
           v-model="list1"
