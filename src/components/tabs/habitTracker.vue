@@ -3,6 +3,7 @@
     <section class="row tracking-in-expand">
       <!-- habit list section -->
       <section class="col-3 innerpage-height">
+        <!-- {{ pickedDays }} -->
         <div class="container">
           <!-- plus button -->
           <div class="text-left mb-4">
@@ -32,13 +33,15 @@
             >
               <li
                 v-for="item in habitList"
-                :key="item.id"
+                :key="item.habitId"
                 class="
                   list-group-item
                   d-flex
                   justify-content-between
                   align-items-center
                 "
+                :class="{ picked: pickedHabit.habitId == item.habitId }"
+                @click="sendQueryHabitTracker(item)"
               >
                 {{ item.name }}
 
@@ -87,6 +90,7 @@
           :rows="3"
           :columns="4"
           @dayclick="onDayClick"
+          @update:from-page="updatePage"
           v-model="pickedDays"
           :model-config="modelConfig"
         />
@@ -115,6 +119,7 @@ import habitCreateModal from "../modal/habitCreateModal.vue";
 import habitEditModal from "../modal/habitEditModal";
 import deleteModal from "../modal/common/deledeModal.vue";
 import draggable from "vuedraggable";
+import { apiHabitsQuery, apiHabitTrackerQuery } from "../../api/index.js";
 
 export default {
   name: "habitTracker",
@@ -126,39 +131,53 @@ export default {
   },
   data() {
     return {
-      checkColor: "teal",
-      thisYear: new Date().getFullYear(),
-      pickedDays: ["2022-05-05"],
+      pageYear: new Date().getFullYear(),
+      pickedDays: [{ id: "2022-01-06", date: "2022-01-05T16:00:00.000Z" }],
       date: new Date(),
       modelConfig: {
         type: "string",
         mask: "YYYY-MM-DD",
       },
       habitList: [
-        { id: "1", name: "吃早餐", checkColor: "red" },
-        { id: "2", name: "喝水2000cc", checkColor: "yellow" },
-        { id: "3", name: "寫技術部落格", checkColor: "green" },
-        { id: "4", name: "伸展10分鐘", checkColor: "teal" },
-        { id: "5", name: "睡前保養", checkColor: "blue" },
-        { id: "6", name: "12點前就寢", checkColor: "pink" },
-        { id: "7", name: "戴維持器", checkColor: "pink" },
+        // { habitId: "1", name: "吃早餐", checkColor: "red" },
+        // { habitId: "2", name: "喝水2000cc", checkColor: "yellow" },
+        // { habitId: "3", name: "寫技術部落格", checkColor: "green" },
+        // { habitId: "4", name: "伸展10分鐘", checkColor: "teal" },
+        // { habitId: "5", name: "睡前保養", checkColor: "blue" },
+        // { habitId: "6", name: "12點前就寢", checkColor: "pink" },
+        // { habitId: "7", name: "戴維持器", checkColor: "pink" },
       ],
       pickedHabit: {},
       modalTitle: "原子習慣",
       drag: false,
     };
   },
-  mounted() {},
+  mounted() {
+    apiHabitsQuery(this.$store.state.userId).then((res) => {
+      console.log(res.data);
+      this.habitList = res.data.habitList;
+      if (this.habitList.length > 0) {
+        this.pickedHabit = this.habitList[0];
+        apiHabitTrackerQuery(
+          this.$store.state.userId,
+          this.pickedHabit.habitId,
+          this.pageYear
+        ).then((res) => {
+          this.pickedDays = res.data.pickedDays;
+        });
+      }
+    });
+  },
   computed: {
     fromDate() {
-      return new Date(this.thisYear, 0, 1);
+      return new Date(this.pageYear, 0, 1);
     },
     dates() {
       return this.pickedDays.map((day) => day.date);
     },
     attributes() {
       return this.dates.map((date) => ({
-        highlight: this.checkColor,
+        highlight: this.pickedHabit.checkColor,
         dates: date,
       }));
     },
@@ -166,7 +185,7 @@ export default {
       return {
         animation: 300,
         disabled: false,
-        chosenClass:"chosen",
+        chosenClass: "chosen",
       };
     },
   },
@@ -198,14 +217,39 @@ export default {
     sendDeleteHabit() {
       console.log("sendDeleteHabit");
     },
+    sendQueryHabitTracker(item) {
+      let self = this;
+      self.pickedHabit = item;
+      apiHabitTrackerQuery(self.$store.state.userId, item.habitId, self.pageYear).then(
+        (res) => {
+          console.log(res.data.pickedDays);
+          this.pickedDays = res.data.pickedDays;
+        }
+      );
+    },
     onDayClick(day) {
-      let idx = this.pickedDays.findIndex((d) => d.id === day.id);
+      let self = this;
+      let idx = self.pickedDays.findIndex((d) => d.id === day.id);
       if (idx >= 0) {
-        this.pickedDays.splice(idx, 1);
+        self.pickedDays.splice(idx, 1);
       } else {
-        this.pickedDays.push({
+        self.pickedDays.push({
           id: day.id,
           date: day.date,
+        });
+      }
+    },
+    updatePage(page) {
+      let self = this;
+      if (self.habitList.length > 0) {
+        self.pageYear = page.year;
+        apiHabitTrackerQuery(
+          self.$store.state.userId,
+          self.pickedHabit.habitId,
+          page.year
+        ).then((res) => {
+          console.log(res.data);
+          self.pickedDays = res.data.pickedDays;
         });
       }
     },
@@ -227,5 +271,7 @@ export default {
   border: dashed 2px #a5dee5;
   background-color: #e4f5f9;
 }
-
+.picked {
+  background-color: #e4f5f9;
+}
 </style>
