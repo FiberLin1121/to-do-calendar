@@ -102,11 +102,11 @@
     <!-- modal section -->
     <habit-create-modal @submitEvent="sendCreateHabit"></habit-create-modal>
     <habit-edit-modal
-      :pickedHabit="pickedHabit"
+      :pickedHabit="copyHabit"
       @submitEvent="sendEditHabit"
     ></habit-edit-modal>
     <delete-modal
-      :pickedItem="pickedHabit"
+      :pickedItem="copyHabit"
       :modalTitle="modalTitle"
       @submitEvent="sendDeleteHabit"
     ></delete-modal>
@@ -116,10 +116,18 @@
 
 <script>
 import habitCreateModal from "../modal/habitCreateModal.vue";
-import habitEditModal from "../modal/habitEditModal";
+import habitEditModal from "../modal/habitEditModal.vue";
 import deleteModal from "../modal/common/deledeModal.vue";
 import draggable from "vuedraggable";
-import { apiHabitsQuery, apiHabitTrackerQuery } from "../../api/index.js";
+import {
+  apiHabitsQuery,
+  apiHabitTrackerQuery,
+  apiHabitAdd,
+  apiHabitUpdate,
+  apiHabitDelete,
+  apiPickedDayAdd,
+  apiPickedDayRemove,
+} from "../../api/index.js";
 
 export default {
   name: "habitTracker",
@@ -138,23 +146,15 @@ export default {
         type: "string",
         mask: "YYYY-MM-DD",
       },
-      habitList: [
-        // { habitId: "1", name: "吃早餐", checkColor: "red" },
-        // { habitId: "2", name: "喝水2000cc", checkColor: "yellow" },
-        // { habitId: "3", name: "寫技術部落格", checkColor: "green" },
-        // { habitId: "4", name: "伸展10分鐘", checkColor: "teal" },
-        // { habitId: "5", name: "睡前保養", checkColor: "blue" },
-        // { habitId: "6", name: "12點前就寢", checkColor: "pink" },
-        // { habitId: "7", name: "戴維持器", checkColor: "pink" },
-      ],
+      habitList: [],
       pickedHabit: {},
+      copyHabit:{},
       modalTitle: "原子習慣",
       drag: false,
     };
   },
   mounted() {
     apiHabitsQuery(this.$store.state.userId).then((res) => {
-      console.log(res.data);
       this.habitList = res.data.habitList;
       if (this.habitList.length > 0) {
         this.pickedHabit = this.habitList[0];
@@ -193,6 +193,9 @@ export default {
     date: function () {
       console.log(this.date);
     },
+    pickedHabit(){
+      this.copyHabit = JSON.parse(JSON.stringify(this.pickedHabit));
+    }
   },
   methods: {
     openHabitCreateModal() {
@@ -208,35 +211,74 @@ export default {
       self.pickedHabit = item;
       $("#deleteModal").modal({ backdrop: "static", keyboard: false });
     },
-    sendCreateHabit() {
-      console.log("sendCreateHabit");
+    sendCreateHabit(createItem) {
+      let self = this;
+      apiHabitAdd(self.$store.state.userId, createItem.name, createItem.checkColor).then((res) => {
+        self.habitList = res.data.habitList;
+        if (this.habitList.length > 0) {
+          this.pickedHabit = this.habitList[this.habitList.length-1];
+          self.pickedDays = [];
+        }
+        $("#habitCreateModal").modal("hide");
+      });
     },
-    sendEditHabit() {
-      console.log("sendEditHabit");
+    sendEditHabit(editItem) {
+      let self = this;
+      apiHabitUpdate(self.$store.state.userId, editItem.habitId, editItem.name, editItem.checkColor).then((res) => {
+        self.habitList = res.data.habitList;
+        self.pickedHabit = editItem;
+        $("#habitEditModal").modal("hide");
+      });
     },
-    sendDeleteHabit() {
-      console.log("sendDeleteHabit");
+    sendDeleteHabit(deleteItem) {
+       let self = this;
+      apiHabitDelete(self.$store.state.userId, deleteItem.habitId).then((res) => {
+        self.habitList = res.data.habitList;
+         if (self.habitList.length > 0) {
+        self.pickedHabit = self.habitList[0];
+        self.sendQueryHabitTracker(self.pickedHabit);
+         }
+        $("#deleteModal").modal("hide");
+      });
     },
     sendQueryHabitTracker(item) {
       let self = this;
       self.pickedHabit = item;
-      apiHabitTrackerQuery(self.$store.state.userId, item.habitId, self.pageYear).then(
-        (res) => {
-          console.log(res.data.pickedDays);
-          this.pickedDays = res.data.pickedDays;
-        }
-      );
+      self.pickedDays = [];
+      apiHabitTrackerQuery(
+        self.$store.state.userId,
+        item.habitId,
+        self.pageYear
+      ).then((res) => {
+        self.pickedDays = res.data.pickedDays;
+      });
     },
     onDayClick(day) {
       let self = this;
       let idx = self.pickedDays.findIndex((d) => d.id === day.id);
       if (idx >= 0) {
-        self.pickedDays.splice(idx, 1);
-      } else {
-        self.pickedDays.push({
-          id: day.id,
-          date: day.date,
+        apiPickedDayRemove(
+          self.$store.state.userId,
+          self.pickedHabit.habitId,
+          self.pageYear,
+          day
+        ).then((res) => {
+          this.pickedDays = res.data.pickedDays;
         });
+        // self.pickedDays.splice(idx, 1);
+      } else {
+        apiPickedDayAdd(
+          self.$store.state.userId,
+          self.pickedHabit.habitId,
+          self.pageYear,
+          day
+        ).then((res) => {
+          this.pickedDays = res.data.pickedDays;
+        });
+        // self.pickedDays.push({
+        //   id: day.id,
+        //   date: day.date,
+        // });
       }
     },
     updatePage(page) {

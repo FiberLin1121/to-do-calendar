@@ -50,7 +50,7 @@ export default {
   mounted() {},
   methods: {
     submitEvent() {
-      this.$emit("submitEvent");
+      this.$emit("submitEvent", this.pickedItem);
     },
   },
 };

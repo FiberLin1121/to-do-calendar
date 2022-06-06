@@ -161,8 +161,13 @@ export default {
     },
     submitEvent() {
       let self = this;
+      let createItem = {
+        name : self.habit,
+        checkColor : self.checkColor
+      }
       if (self.checkHabitInput()) {
-        self.$emit("submitEvent");
+        self.$emit("submitEvent", createItem);
+        self.resetForm();
       }
     },
   },

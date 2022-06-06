@@ -113,7 +113,6 @@ export default {
       ],
     };
   },
-  mounted() {},
   watch: {
     "pickedHabit.name"() {
       if (this.pickedHabit.name) {
@@ -122,6 +121,7 @@ export default {
       }
     },
       "pickedHabit.checkColor"() {
+
       if (this.pickedHabit.checkColor) {
         this.checkColorError = false;
         this.checkColorErrorMsg = "";
@@ -160,7 +160,7 @@ export default {
     submitEvent() {
       let selt = this;
       if (selt.checkHabitInput()) {
-        selt.$emit("submitEvent");
+        selt.$emit("submitEvent", selt.pickedHabit);
       }
     },
   },
