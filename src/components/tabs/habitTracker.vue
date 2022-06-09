@@ -9,6 +9,7 @@
           <div class="text-left mb-4">
             <button
               type="button"
+              title="新增原子習慣"
               class="btn btn-first text-white"
               @click="openHabitCreateModal"
             >
@@ -17,6 +18,13 @@
           </div>
           <!-- /plus button -->
 
+          <div v-if="habitList.length==0">
+            <div class="mb-5 text-first">請點「+」按鈕開始建立原子習慣</div>
+            <div>
+              <font-awesome-icon icon="fa-solid fa-calendar" size="10x" class="no-data-icon-color" />
+            </div>
+          </div>
+          
           <!-- list group -->
           <draggable
             v-model="habitList"
@@ -50,6 +58,7 @@
                   <div class="btn-group btn-group-sm" role="group">
                     <button
                       type="button"
+                      title="編輯原子習慣"
                       class="btn btn-second text-secondary"
                       @click="openHabitEditModal(item)"
                     >
@@ -60,6 +69,7 @@
                     </button>
                     <button
                       type="button"
+                      title="刪除原子習慣"
                       class="btn btn-secondary text-white"
                       @click="openDeleteModal(item)"
                     >
@@ -84,6 +94,7 @@
         <div class="dot-decoration-header p-5"></div>
         <!-- <p>{{ pickedDays }}</p> -->
         <v-calendar
+          :first-day-of-week="2"
           :step="12"
           :from-date="fromDate"
           :attributes="attributes"
@@ -121,6 +132,7 @@ import deleteModal from "../modal/common/deledeModal.vue";
 import draggable from "vuedraggable";
 import {
   apiHabitsQuery,
+  apiHabitsOrderUpdate,
   apiHabitTrackerQuery,
   apiHabitAdd,
   apiHabitUpdate,
@@ -140,12 +152,13 @@ export default {
   data() {
     return {
       pageYear: new Date().getFullYear(),
-      pickedDays: [{ id: "2022-01-06", date: "2022-01-05T16:00:00.000Z" }],
+      pickedDays: [],
       date: new Date(),
       modelConfig: {
         type: "string",
         mask: "YYYY-MM-DD",
       },
+      habitsId:"",
       habitList: [],
       pickedHabit: {},
       copyHabit:{},
@@ -156,6 +169,7 @@ export default {
   mounted() {
     apiHabitsQuery(this.$store.state.userId).then((res) => {
       this.habitList = res.data.habitList;
+      this.habitsId = res.data.habitsId;
       if (this.habitList.length > 0) {
         this.pickedHabit = this.habitList[0];
         apiHabitTrackerQuery(
@@ -189,14 +203,6 @@ export default {
       };
     },
   },
-  watch: {
-    date: function () {
-      console.log(this.date);
-    },
-    pickedHabit(){
-      this.copyHabit = JSON.parse(JSON.stringify(this.pickedHabit));
-    }
-  },
   methods: {
     openHabitCreateModal() {
       $("#habitCreateModal").modal({ backdrop: "static", keyboard: false });
@@ -204,11 +210,13 @@ export default {
     openHabitEditModal(item) {
       let self = this;
       self.pickedHabit = item;
+      self.copyHabit = JSON.parse(JSON.stringify(self.pickedHabit));
       $("#habitEditModal").modal({ backdrop: "static", keyboard: false });
     },
     openDeleteModal(item) {
       let self = this;
       self.pickedHabit = item;
+      self.copyHabit = JSON.parse(JSON.stringify(self.pickedHabit));
       $("#deleteModal").modal({ backdrop: "static", keyboard: false });
     },
     sendCreateHabit(createItem) {
@@ -234,11 +242,11 @@ export default {
        let self = this;
       apiHabitDelete(self.$store.state.userId, deleteItem.habitId).then((res) => {
         self.habitList = res.data.habitList;
-         if (self.habitList.length > 0) {
-        self.pickedHabit = self.habitList[0];
-        self.sendQueryHabitTracker(self.pickedHabit);
-         }
         $("#deleteModal").modal("hide");
+          if (self.habitList.length > 0) {
+          self.pickedHabit = self.habitList[0];
+          self.sendQueryHabitTracker(self.pickedHabit);
+          }
       });
     },
     sendQueryHabitTracker(item) {
@@ -290,18 +298,22 @@ export default {
           self.pickedHabit.habitId,
           page.year
         ).then((res) => {
-          console.log(res.data);
           self.pickedDays = res.data.pickedDays;
         });
       }
     },
     getdata(evt) {
-      console.log(evt.draggedContext.element.id);
+      
     },
     datadragEnd(evt) {
-      console.log("拖動前的索引 :" + evt.oldIndex);
-      console.log("拖動後的索引 :" + evt.newIndex);
-      console.log(this.tags);
+      let self = this;
+      apiHabitsOrderUpdate(
+        self.$store.state.userId,
+        self.pickedHabit.habitId,
+        self.habitList
+        ).then((res=>{
+          self.habitList = res.data.habitList;
+        }));
     },
   },
 };
@@ -309,6 +321,10 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.no-data-icon-color {
+  color: rgb(165 222 229 / 21%)
+}
+
 .chosen {
   border: dashed 2px #a5dee5;
   background-color: #e4f5f9;

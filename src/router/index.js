@@ -77,7 +77,6 @@ router.beforeEach((to, from, next) => {
         next();
       }, 1000);
     } else {
-      alert("請重新登入");
       store.commit("isLoginModalOpen", true);
       console.log("router commit : isLoginModalOpen = true");
       next("/");

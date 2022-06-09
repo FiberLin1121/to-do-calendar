@@ -51,6 +51,12 @@ instance.interceptors.response.use(
 export const apiHabitsQuery = (userId) =>
   instance.get(`/users/${userId}/habits`);
 
+export const apiHabitsOrderUpdate = (userId, habitsId, habitList) =>
+  instance.put(`/users/${userId}/habits`, {
+    habitsId: habitsId,
+    habitList: habitList,
+  });
+
 export const apiHabitAdd = (userId, name, checkColor) =>
   instance.patch(`/users/${userId}/habits`, {
     op: "add",
@@ -80,6 +86,8 @@ export const apiHabitDelete = (userId, habitId) =>
       habitId:habitId,
     },
   });
+
+
 
 // HabitTracker 相關的 api
 export const apiHabitTrackerQuery = (userId, habitId, year) =>

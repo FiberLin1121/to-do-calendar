@@ -18,6 +18,7 @@
           </button>
         </div>
         <v-date-picker
+          :first-day-of-week="2"
           :rows="2"
           mode="date"
           color="primary"
