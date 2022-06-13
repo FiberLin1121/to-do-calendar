@@ -378,7 +378,7 @@ export default {
       //send login API to server
       if (result) {
         self.$store.commit("isLoginModalOpen", false);
-        self.$store.commit("setUserId", "user01");
+        self.$store.commit("setUserId", "user02");
         self.$store.commit("setUserName", "test");
         self.$store.commit("setToken", "123");
         self.$store.commit("setStoreToSession");

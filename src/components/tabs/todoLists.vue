@@ -3,6 +3,7 @@
     <section class="row tracking-in-expand">
       <!-- monthly calender section -->
       <section class="col-3 innerpage-height">
+        <div class="h5 text-first">{{ pickedDate }}</div>
         <div class="btn-group btn-group-sm my-4" role="group">
           <button type="button" class="btn btn-outline-secondary">
             全部
@@ -20,6 +21,7 @@
         <v-date-picker
           :first-day-of-week="2"
           :rows="2"
+          @dayclick="onDayClick"
           mode="date"
           color="primary"
           v-model="pickedDate"
@@ -32,7 +34,31 @@
       <section class="col-9 innerpage-height">
         <div class="dot-decoration-header p-5"></div>
         <div class="container">
-          <div class="row">
+          <!-- no data reminder -->
+          <div v-if="this.todoList.length == 0 && this.doneList.length == 0">
+            <div class="d-flex text-left mx-4">
+              <button
+                type="button"
+                class="btn btn-first text-white"
+                @click="openTaskCreateModal"
+              >
+                <font-awesome-icon icon="fa-solid fa-plus" />
+              </button>
+            </div>
+            <div class="d-flex flex-column justify-content-center">
+              <div class="mb-5 text-first">請點「+」按鈕開始建立代辦事項</div>
+              <div class="align-self-center no-data-icon-bg rounded-circle">
+                <font-awesome-icon
+                  icon="fa-solid fa-clipboard-list"
+                  size="10x"
+                  class="text-white mt-5"
+                />
+              </div>
+            </div>
+          </div>
+          <!-- /no data reminder -->
+
+          <div v-else class="row">
             <!-- to do section -->
             <div class="col-6">
               <div class="d-flex text-left mx-4">
@@ -57,7 +83,7 @@
                 @start="drag = true"
                 @end="drag = false"
                 :move="getdata"
-                @update="datadragEnd"
+                @change="dragColumn"
                 class="list-group"
               >
                 <transition-group
@@ -69,18 +95,19 @@
                     :style="{
                       borderLeftColor: renderLabelColorValue(item.labelType),
                     }"
-                    v-for="item in todoList"
-                    :key="item.id"
+                    v-for="(item, index) in todoList"
+                    :key="index"
                   >
                     <div class="form-group form-check d-flex">
                       <input
                         type="checkbox"
                         class="form-check-input align-self-center"
-                        :id="item.id"
+                        :id="item.taskId"
+                        @click="onTodoListCheckboxClick(item)"
                       />
                       <label
                         class="form-check-label align-self-center"
-                        :for="item.id"
+                        :for="item.taskId"
                         :style="{
                           color: renderLabelColorValue(item.labelType),
                         }"
@@ -125,18 +152,26 @@
             <div class="col-6">
               <div class="h2 text-info text-left mb-4 mx-4">
                 Done
+                <!-- star icon -->
                 <font-awesome-icon
                   v-if="
-                    doneList.length >= (todoList.length + doneList.length) / 2 && (doneList.length != todoList.length + doneList.length && todoList.length!=0)
+                    doneList.length >=
+                      (todoList.length + doneList.length) / 2 &&
+                    doneList.length != todoList.length + doneList.length &&
+                    todoList.length != 0
                   "
                   icon="fa-solid fa-star-half-stroke"
                   class="text-warning"
                 />
                 <font-awesome-icon
-                  v-if="doneList.length == todoList.length + doneList.length"
+                  v-if="
+                    doneList.length == todoList.length + doneList.length &&
+                    doneList.length != 0
+                  "
                   icon="fa-solid fa-star"
                   class="text-warning"
                 />
+                <!-- /star icon -->
               </div>
               <!-- done list -->
               <draggable
@@ -145,7 +180,7 @@
                 @start="drag = true"
                 @end="drag = false"
                 :move="getdata"
-                @update="datadragEnd"
+                @change="dragColumn"
                 class="list-group"
               >
                 <transition-group
@@ -155,19 +190,20 @@
                   <div
                     class="task-label mb-3 mx-4 d-flex bg-done"
                     style="border-left-color: #93d2d6"
-                    v-for="item in doneList"
-                    :key="item.id"
+                    v-for="(item, index) in doneList"
+                    :key="index"
                   >
                     <div class="form-group form-check d-flex">
                       <input
                         type="checkbox"
                         class="form-check-input align-self-center"
-                        :id="item.id"
+                        :id="item.taskId"
                         checked
+                        @click="onDoneListCheckboxClick(item)"
                       />
                       <label
                         class="form-check-label align-self-center"
-                        :for="item.id"
+                        :for="item.taskId"
                         :style="{
                           color: renderLabelColorValue(item.labelType),
                         }"
@@ -216,11 +252,12 @@
     <!-- modal section -->
     <task-create-modal @submitEvent="sendCreateTask"></task-create-modal>
     <task-edit-modal
-      :pickedTask="pickedTask"
+      :pickedTask="copyTask"
+      :path="path"
       @submitEvent="sendEditTask"
     ></task-edit-modal>
     <delete-modal
-      :pickedItem="pickedTask"
+      :pickedItem="copyTask"
       :modalTitle="modalTitle"
       @submitEvent="sendDeleteTask"
     >
@@ -235,6 +272,13 @@ import taskCreateModal from "../modal/taskCreateModal.vue";
 import taskEditModal from "../modal/taskEditModal.vue";
 import deleteModal from "../modal/common/deledeModal.vue";
 import draggable from "vuedraggable";
+import {
+  apiTodoListQuery,
+  apiTodoListOrderUpdate,
+  apiTaskAdd,
+  apiTaskUpdate,
+  apiTaskDelete,
+} from "../../api/index.js";
 
 export default {
   components: {
@@ -250,21 +294,38 @@ export default {
         type: "string",
         mask: "YYYY-MM-DD",
       },
-      todoList: [
-        { id: "TA01", name: "代辦事項1", labelType: "firstColor" },
-        { id: "TA02", name: "代辦事項2", labelType: "secondColor" },
-        { id: "TA03", name: "代辦事項3", labelType: "thirdColor" },
-        { id: "TA04", name: "代辦事項4", labelType: "fourthColor" },
-      ],
-      doneList: [
-        { id: "TA01", name: "完成事項1", labelType: "firstColor" },
-        { id: "TA02", name: "完成事項2", labelType: "secondColor" },
-        { id: "TA03", name: "完成事項3", labelType: "thirdColor" },
-        { id: "TA04", name: "完成事項4", labelType: "fourthColor" },
-      ],
+      todoListId: "",
+      todoList: [],
+      doneList: [],
       pickedTask: {},
+      copyTask: {},
+      path: "",
       modalTitle: "代辦事項",
     };
+  },
+  mounted() {
+    let today = new Date();
+    let dateStr = new Date(today.getTime() - today.getTimezoneOffset() * 60000)
+      .toISOString()
+      .split("T")[0];
+    this.pickedDate = dateStr;
+    apiTodoListQuery(this.$store.state.userId, dateStr).then((res) => {
+      if (res.data) {
+        this.todoListId = res.data.id;
+        this.todoList = res.data.todoList;
+        this.doneList = res.data.doneList;
+      }
+    });
+  },
+  watch: {
+    pickedTask() {
+      if (this.todoList.includes(this.pickedTask)) {
+        this.path = "todoList";
+      }
+      if (this.doneList.includes(this.pickedTask)) {
+        this.path = "doneList";
+      }
+    },
   },
   computed: {
     dragOptions() {
@@ -283,29 +344,120 @@ export default {
     openTaskEditModal(item) {
       let self = this;
       self.pickedTask = item;
+      self.copyTask = JSON.parse(JSON.stringify(self.pickedTask));
       $("#taskEditModal").modal({ backdrop: "static", keyboard: false });
     },
     openTaskDeleteModal(item) {
       let self = this;
       self.pickedTask = item;
+      self.copyTask = JSON.parse(JSON.stringify(self.pickedTask));
       $("#deleteModal").modal({ backdrop: "static", keyboard: false });
     },
-    sendCreateTask() {
-      console.log("sendCreateTask");
+    sendCreateTask(createItem) {
+      let self = this;
+      apiTaskAdd(
+        self.$store.state.userId,
+        self.pickedDate,
+        createItem.name,
+        createItem.labelType
+      ).then((res) => {
+        self.todoList = res.data.todoList;
+        self.doneList = res.data.doneList;
+      });
+      $("#taskCreateModal").modal("hide");
     },
-    sendEditTask() {
-      console.log("sendEditTask");
+    sendEditTask(editItem) {
+      let self = this;
+      apiTaskUpdate(
+        self.$store.state.userId,
+        self.pickedDate,
+        self.path,
+        editItem.taskId,
+        editItem.name,
+        editItem.labelType
+      ).then((res) => {
+        self.todoList = res.data.todoList;
+        self.doneList = res.data.doneList;
+      });
+      $("#taskEditModal").modal("hide");
     },
-    sendDeleteTask() {
-      console.log("sendDeleteTask");
+    sendDeleteTask(deleteItem) {
+      let self = this;
+      apiTaskDelete(
+        self.$store.state.userId,
+        self.pickedDate,
+        self.path,
+        deleteItem.taskId
+      ).then((res) => {
+        self.todoList = res.data.todoList;
+        self.doneList = res.data.doneList;
+        $("#deleteModal").modal("hide");
+      });
     },
-    getdata(evt) {
-      console.log(evt.draggedContext.element.id);
+    onDayClick(day) {
+      let self = this;
+      apiTodoListQuery(self.$store.state.userId, day.id).then((res) => {
+        if (res.data) {
+          self.todoListId = res.data.id;
+          self.todoList = res.data.todoList;
+          self.doneList = res.data.doneList;
+        } else {
+          self.todoList = [];
+          self.doneList = [];
+        }
+      });
     },
-    datadragEnd(evt) {
-      console.log("拖動前的索引 :" + evt.oldIndex);
-      console.log("拖動後的索引 :" + evt.newIndex);
+    onTodoListCheckboxClick(item) {
+      let self = this;
+      let idx = self.todoList.findIndex((i) => i.taskId === item.taskId);
+      if (idx >= 0) {
+        self.todoList.splice(idx, 1);
+        self.doneList.push(item);
+        apiTodoListOrderUpdate(
+        self.$store.state.userId,
+        self.pickedDate,
+        self.todoListId,
+        self.todoList,
+        self.doneList
+      ).then((res) => {
+        self.todoList = res.data.todoList;
+        self.doneList = res.data.doneList;
+      });
+      }
     },
+    onDoneListCheckboxClick(item) {
+      let self = this;
+      let idx = self.doneList.findIndex((i) => i.taskId === item.taskId);
+      if (idx >= 0) {
+        self.doneList.splice(idx, 1);
+        self.todoList.push(item);
+        apiTodoListOrderUpdate(
+        self.$store.state.userId,
+        self.pickedDate,
+        self.todoListId,
+        self.todoList,
+        self.doneList
+      ).then((res) => {
+        self.todoList = res.data.todoList;
+        self.doneList = res.data.doneList;
+      });
+      }
+    },
+    getdata(evt) {},
+    dragColumn(evt) {
+      let self = this;
+      apiTodoListOrderUpdate(
+        self.$store.state.userId,
+        self.pickedDate,
+        self.todoListId,
+        self.todoList,
+        self.doneList
+      ).then((res) => {
+        self.todoList = res.data.todoList;
+        self.doneList = res.data.doneList;
+      });
+    },
+    formatDate() {},
     renderLabelColorValue(color) {
       let value = "";
       switch (color) {
@@ -360,5 +512,11 @@ export default {
 .chosen {
   border: dashed 2px #f5cacf;
   background-color: #fff5f6;
+}
+
+.no-data-icon-bg {
+  background-color: #a5dee536;
+  width: 280px;
+  height: 280px;
 }
 </style>

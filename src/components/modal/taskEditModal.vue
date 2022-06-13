@@ -153,7 +153,7 @@ export default {
     submitEvent() {
       let self = this;
       if (self.checkTaskInput()) {
-        self.$emit("submitEvent");
+        self.$emit("submitEvent", self.pickedTask);
       }
     },
   },

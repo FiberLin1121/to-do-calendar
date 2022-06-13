@@ -27,7 +27,7 @@ instance.interceptors.response.use(
   function (error) {
     if (error.response) {
       switch (error.response.status) {
-        case 404:
+        case 400:
           alert("你要找的頁面不存在");
           // go to 404 page
           break;
@@ -72,7 +72,7 @@ export const apiHabitUpdate = (userId, habitId, name, checkColor) =>
     op: "replace",
     path: "/habitList",
     value: {
-      habitId:habitId,
+      habitId: habitId,
       name: name,
       checkColor: checkColor,
     },
@@ -83,11 +83,9 @@ export const apiHabitDelete = (userId, habitId) =>
     op: "remove",
     path: "/habitList",
     value: {
-      habitId:habitId,
+      habitId: habitId,
     },
   });
-
-
 
 // HabitTracker 相關的 api
 export const apiHabitTrackerQuery = (userId, habitId, year) =>
@@ -120,3 +118,44 @@ export const apiPickedDayRemove = (userId, habitId, year, day) =>
       },
     }
   );
+
+// TodoList 相關的 api
+export const apiTodoListQuery = (userId, date) =>
+  instance.get(`/users/${userId}/todoLists?date=${date}`);
+
+export const apiTodoListOrderUpdate = (userId, date, todoListId, todoList, doneList) =>
+instance.put(`/users/${userId}/todoLists?date=${date}`, {
+    todoListId: todoListId,
+    todoList: todoList,
+    doneList: doneList,
+  });
+
+export const apiTaskAdd = (userId, date, name, labelType) =>
+  instance.patch(`/users/${userId}/todoLists?date=${date}`, {
+    op: "add",
+    path: "/todoList",
+    value: {
+      name: name,
+      labelType: labelType,
+    },
+  });
+
+  export const apiTaskUpdate = (userId, date, path, taskId, name, labelType) =>
+  instance.patch(`/users/${userId}/todoLists?date=${date}`, {
+    op: "replace",
+    path: "/"+ path,
+    value: {
+      taskId: taskId,
+      name: name,
+      labelType: labelType,
+    },
+  });
+
+  export const apiTaskDelete = (userId, date, path, taskId) =>
+  instance.patch(`/users/${userId}/todoLists?date=${date}`, {
+    op: "remove",
+    path: "/"+ path,
+    value: {
+      taskId: taskId,
+    },
+  });

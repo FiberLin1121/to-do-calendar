@@ -46,11 +46,11 @@
                   <input
                     type="radio"
                     class="custom-control-input"
-                    :class="{ 'is-invalid': checkColorError }"
+                    :class="{ 'is-invalid': labelTypeError }"
                     :id="item.id"
                     name="radio-stacked"
                     :value="item.name"
-                    v-model="checkColor"
+                    v-model="labelType"
                     required
                   />
                   <label
@@ -62,7 +62,7 @@
               </div>
             </div>
 
-            <div class="error-msg">{{ checkColorErrorMsg }}</div>
+            <div class="error-msg">{{ labelTypeErrorMsg }}</div>
             <div class="error-msg">{{ serverErrorMsg }}</div>
           </form>
         </div>
@@ -95,15 +95,15 @@ export default {
       task: "",
       taskError: false,
       taskErrorMsg: "",
-      checkColor: "",
-      checkColorError: false,
-      checkColorErrorMsg: "",
+      labelType: "",
+      labelTypeError: false,
+      labelTypeErrorMsg: "",
       serverErrorMsg: "",
       colorList: [
-        { id: "TC1", name: "red", value: "#e53e3e" },
-        { id: "TC2", name: "orange", value: "#dd6b20" },
-        { id: "TC3", name: "yellow", value: "#d69e2e" },
-        { id: "TC4", name: "green", value: "#38a169" },
+        { id: "TC1", name: "firstColor", value: "#e53e3e" },
+        { id: "TC2", name: "secondColor", value: "#dd6b20" },
+        { id: "TC3", name: "thirdColor", value: "#d69e2e" },
+        { id: "TC4", name: "fourthColor", value: "#38a169" },
       ],
     };
   },
@@ -115,10 +115,10 @@ export default {
         this.taskErrorMsg = "";
       }
     },
-    checkColor() {
-      if (this.checkColor) {
-        this.checkColorError = false;
-        this.checkColorErrorMsg = "";
+    labelType() {
+      if (this.labelType) {
+        this.labelTypeError = false;
+        this.labelTypeErrorMsg = "";
       }
     },
   },
@@ -133,9 +133,9 @@ export default {
       self.task = "";
       self.taskError = false;
       self.taskErrorMsg = "";
-      self.checkColor = "";
-      self.checkColorError = false;
-      self.checkColorErrorMsg = "";
+      self.labelType = "";
+      self.labelTypeError = false;
+      self.labelTypeErrorMsg = "";
       self.serverErrorMsg = "";
     },
     checkTaskInput() {
@@ -146,17 +146,22 @@ export default {
         self.taskErrorMsg = "代辦事項未填";
         validity = false;
       }
-      if (!self.checkColor) {
-        self.checkColorError = true;
-        self.checkColorErrorMsg = "標籤顏色未選";
+      if (!self.labelType) {
+        self.labelTypeError = true;
+        self.labelTypeErrorMsg = "標籤顏色未選";
         validity = false;
       }
       return validity;
     },
     submitEvent() {
       let self = this;
+      let createItem = {
+        name : self.task,
+        labelType : self.labelType
+      }
       if (self.checkTaskInput()) {
-        self.$emit("submitEvent");
+        self.$emit("submitEvent", createItem);
+        self.resetForm();
       }
     },
   },

@@ -18,73 +18,81 @@
           </div>
           <!-- /plus button -->
 
-          <div v-if="habitList.length==0">
+          <!-- no data reminder -->
+          <div v-if="habitList.length == 0">
             <div class="mb-5 text-first">請點「+」按鈕開始建立原子習慣</div>
             <div>
-              <font-awesome-icon icon="fa-solid fa-calendar" size="10x" class="no-data-icon-color" />
+              <font-awesome-icon
+                icon="fa-solid fa-calendar"
+                size="10x"
+                class="no-data-icon-color"
+              />
             </div>
           </div>
-          
-          <!-- list group -->
-          <draggable
-            v-model="habitList"
-            v-bind="dragOptions"
-            @start="drag = true"
-            @end="drag = false"
-            :move="getdata"
-            @update="datadragEnd"
-            class="list-group"
-          >
-            <transition-group
-              type="transition"
-              name="!drag ? 'flip-list' : null"
-            >
-              <li
-                v-for="item in habitList"
-                :key="item.habitId"
-                class="
-                  list-group-item
-                  d-flex
-                  justify-content-between
-                  align-items-center
-                "
-                :class="{ picked: pickedHabit.habitId == item.habitId }"
-                @click="sendQueryHabitTracker(item)"
-              >
-                {{ item.name }}
+          <!-- /no data reminder -->
 
-                <!-- button group -->
-                <div class="text-right">
-                  <div class="btn-group btn-group-sm" role="group">
-                    <button
-                      type="button"
-                      title="編輯原子習慣"
-                      class="btn btn-second text-secondary"
-                      @click="openHabitEditModal(item)"
-                    >
-                      <font-awesome-icon
-                        icon="fa-solid fa-pen"
-                        style="font-size: 12px"
-                      />
-                    </button>
-                    <button
-                      type="button"
-                      title="刪除原子習慣"
-                      class="btn btn-secondary text-white"
-                      @click="openDeleteModal(item)"
-                    >
-                      <font-awesome-icon
-                        icon="fa-solid fa-trash-can"
-                        style="font-size: 12px"
-                      />
-                    </button>
+          <div v-else>
+            <!-- list group -->
+            <draggable
+              v-model="habitList"
+              v-bind="dragOptions"
+              @start="drag = true"
+              @end="drag = false"
+              :move="getdata"
+              @update="datadragEnd"
+              class="list-group"
+            >
+              <transition-group
+                type="transition"
+                name="!drag ? 'flip-list' : null"
+              >
+                <li
+                  v-for="item in habitList"
+                  :key="item.habitId"
+                  class="
+                    list-group-item
+                    d-flex
+                    justify-content-between
+                    align-items-center
+                  "
+                  :class="{ picked: pickedHabit.habitId == item.habitId }"
+                  @click="sendQueryHabitTracker(item)"
+                >
+                  {{ item.name }}
+
+                  <!-- button group -->
+                  <div class="text-right">
+                    <div class="btn-group btn-group-sm" role="group">
+                      <button
+                        type="button"
+                        title="編輯原子習慣"
+                        class="btn btn-second text-secondary"
+                        @click="openHabitEditModal(item)"
+                      >
+                        <font-awesome-icon
+                          icon="fa-solid fa-pen"
+                          style="font-size: 12px"
+                        />
+                      </button>
+                      <button
+                        type="button"
+                        title="刪除原子習慣"
+                        class="btn btn-secondary text-white"
+                        @click="openDeleteModal(item)"
+                      >
+                        <font-awesome-icon
+                          icon="fa-solid fa-trash-can"
+                          style="font-size: 12px"
+                        />
+                      </button>
+                    </div>
                   </div>
-                </div>
-                <!-- /button group -->
-              </li>
-            </transition-group>
-          </draggable>
-          <!-- /list group -->
+                  <!-- /button group -->
+                </li>
+              </transition-group>
+            </draggable>
+            <!-- /list group -->
+          </div>
         </div>
       </section>
       <!-- /habit list section -->
@@ -158,27 +166,31 @@ export default {
         type: "string",
         mask: "YYYY-MM-DD",
       },
-      habitsId:"",
+      habitsId: "",
       habitList: [],
       pickedHabit: {},
-      copyHabit:{},
+      copyHabit: {},
       modalTitle: "原子習慣",
       drag: false,
     };
   },
   mounted() {
     apiHabitsQuery(this.$store.state.userId).then((res) => {
-      this.habitList = res.data.habitList;
-      this.habitsId = res.data.habitsId;
-      if (this.habitList.length > 0) {
-        this.pickedHabit = this.habitList[0];
-        apiHabitTrackerQuery(
-          this.$store.state.userId,
-          this.pickedHabit.habitId,
-          this.pageYear
-        ).then((res) => {
-          this.pickedDays = res.data.pickedDays;
-        });
+      if (res.data) {
+        this.habitList = res.data.habitList;
+        this.habitsId = res.data.habitsId;
+        if (this.habitList.length > 0) {
+          this.pickedHabit = this.habitList[0];
+          apiHabitTrackerQuery(
+            this.$store.state.userId,
+            this.pickedHabit.habitId,
+            this.pageYear
+          ).then((res) => {
+            if (res.data) {
+              this.pickedDays = res.data.pickedDays;
+            }
+          });
+        }
       }
     });
   },
@@ -221,10 +233,14 @@ export default {
     },
     sendCreateHabit(createItem) {
       let self = this;
-      apiHabitAdd(self.$store.state.userId, createItem.name, createItem.checkColor).then((res) => {
+      apiHabitAdd(
+        self.$store.state.userId,
+        createItem.name,
+        createItem.checkColor
+      ).then((res) => {
         self.habitList = res.data.habitList;
-        if (this.habitList.length > 0) {
-          this.pickedHabit = this.habitList[this.habitList.length-1];
+        if (self.habitList.length > 0) {
+          self.pickedHabit = self.habitList[self.habitList.length - 1];
           self.pickedDays = [];
         }
         $("#habitCreateModal").modal("hide");
@@ -232,22 +248,29 @@ export default {
     },
     sendEditHabit(editItem) {
       let self = this;
-      apiHabitUpdate(self.$store.state.userId, editItem.habitId, editItem.name, editItem.checkColor).then((res) => {
+      apiHabitUpdate(
+        self.$store.state.userId,
+        editItem.habitId,
+        editItem.name,
+        editItem.checkColor
+      ).then((res) => {
         self.habitList = res.data.habitList;
         self.pickedHabit = editItem;
         $("#habitEditModal").modal("hide");
       });
     },
     sendDeleteHabit(deleteItem) {
-       let self = this;
-      apiHabitDelete(self.$store.state.userId, deleteItem.habitId).then((res) => {
-        self.habitList = res.data.habitList;
-        $("#deleteModal").modal("hide");
+      let self = this;
+      apiHabitDelete(self.$store.state.userId, deleteItem.habitId).then(
+        (res) => {
+          self.habitList = res.data.habitList;
+          $("#deleteModal").modal("hide");
           if (self.habitList.length > 0) {
-          self.pickedHabit = self.habitList[0];
-          self.sendQueryHabitTracker(self.pickedHabit);
+            self.pickedHabit = self.habitList[0];
+            self.sendQueryHabitTracker(self.pickedHabit);
           }
-      });
+        }
+      );
     },
     sendQueryHabitTracker(item) {
       let self = this;
@@ -258,7 +281,11 @@ export default {
         item.habitId,
         self.pageYear
       ).then((res) => {
-        self.pickedDays = res.data.pickedDays;
+        if (res.data) {
+          self.pickedDays = res.data.pickedDays;
+        } else {
+          self.pickedDays = [];
+        }
       });
     },
     onDayClick(day) {
@@ -298,22 +325,24 @@ export default {
           self.pickedHabit.habitId,
           page.year
         ).then((res) => {
-          self.pickedDays = res.data.pickedDays;
+          if (res.data) {
+            self.pickedDays = res.data.pickedDays;
+          } else {
+            self.pickedDays = [];
+          }
         });
       }
     },
-    getdata(evt) {
-      
-    },
+    getdata(evt) {},
     datadragEnd(evt) {
       let self = this;
       apiHabitsOrderUpdate(
         self.$store.state.userId,
         self.pickedHabit.habitId,
         self.habitList
-        ).then((res=>{
-          self.habitList = res.data.habitList;
-        }));
+      ).then((res) => {
+        self.habitList = res.data.habitList;
+      });
     },
   },
 };
@@ -322,7 +351,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .no-data-icon-color {
-  color: rgb(165 222 229 / 21%)
+  color: rgb(165 222 229 / 21%);
 }
 
 .chosen {
