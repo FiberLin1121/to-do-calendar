@@ -27,16 +27,16 @@ instance.interceptors.response.use(
   function (error) {
     if (error.response) {
       switch (error.response.status) {
-        case 400:
-          alert("你要找的頁面不存在");
-          // go to 404 page
-          break;
+        // case 404:
+        //   alert("你要找的頁面不存在");
+        //   // go to 404 page
+        //   break;
         case 500:
           alert("程式發生問題");
           // go to 500 page
           break;
-        default:
-          alert(error.message);
+        // default:
+        //   alert(error.message);
       }
     }
     if (!window.navigator.onLine) {
@@ -46,6 +46,35 @@ instance.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+// User 相關的 api
+export const apiUserQuery = (userId) =>
+  instance.get(`/users/${userId}`);
+  
+export const apiUserRegister = (email, name, password) =>
+  instance.post(`/users/register`, {
+    email: email,
+    name: name,
+    password: password,
+  });
+
+export const apiUserLogin = (email, password) =>
+  instance.post(`/users/login`, {
+    email: email,
+    password: password,
+  });
+
+export const apiLabelSettingUpdate = (userId, firstColor, secondColor, thirdColor, fourthColor) =>
+  instance.patch(`/users/${userId}`, {
+    op: "replace",
+    path: "/labelSetting",
+    value: {
+      firstColor: firstColor,
+      secondColor: secondColor,
+      thirdColor: thirdColor,
+      fourthColor: fourthColor,
+    },
+  });
 
 // Habits 相關的 api
 export const apiHabitsQuery = (userId) =>
@@ -120,6 +149,9 @@ export const apiPickedDayRemove = (userId, habitId, year, day) =>
   );
 
 // TodoList 相關的 api
+export const apiLabelDefaultValueQuery = () =>
+  instance.get(`/labels`);
+
 export const apiTodoListQuery = (userId, date) =>
   instance.get(`/users/${userId}/todoLists?date=${date}`);
 

@@ -88,6 +88,7 @@
       @submitEvent="sendResetPassword"
     ></reset-password-modal>
     <label-setting-modal
+      :user="copyUser"
       @submitEvent="sendEditLabelSetting"
     ></label-setting-modal>
     <!-- /modal section -->
@@ -98,6 +99,7 @@
 import userEditModal from "../modal/userEditModal.vue";
 import resetPasswordModal from "../modal/resetPasswordModal.vue";
 import labelSettingModal from "../modal/labelSettingModal.vue";
+import { apiUserQuery, apiLabelSettingUpdate } from "../../api/index.js";
 
 export default {
   name: "innerPage",
@@ -107,13 +109,27 @@ export default {
     "label-setting-modal": labelSettingModal,
   },
   data() {
-    return {};
+    return {
+      user: {},
+      copyUser: {},
+    };
+  },
+  mounted() {
+    apiUserQuery(this.$store.state.userId).then((res) => {
+      this.user = res.data;
+      this.$store.commit("setFirstColor", res.data.labelSetting.firstColor);
+      this.$store.commit("setSecondColor", res.data.labelSetting.secondColor);
+      this.$store.commit("setThirdColor", res.data.labelSetting.thirdColor);
+      this.$store.commit("setFourthColor", res.data.labelSetting.fourthColor);
+    });
   },
   methods: {
     openUserEditModal() {
       $("#userEditModal").modal({ backdrop: "static", keyboard: false });
     },
     openLabelSettingModal() {
+      let self = this;
+      self.copyUser = JSON.parse(JSON.stringify(self.user));
       $("#labelSettingModal").modal({ backdrop: "static", keyboard: false });
     },
     sendEditUser() {
@@ -122,8 +138,24 @@ export default {
     sendResetPassword() {
       console.log("sendResetPassword");
     },
-    sendEditLabelSetting(){
+    sendEditLabelSetting(editItem) {
       console.log("sendEditLabelSetting");
+      let self = this;
+      apiLabelSettingUpdate(
+        self.$store.state.userId,
+        editItem.firstColor,
+        editItem.secondColor,
+        editItem.thirdColor,
+        editItem.fourthColor
+      ).then((res) => {
+        console.log("res.status=" + res.status);
+        self.user = res.data;
+        self.$store.commit("setFirstColor", res.data.labelSetting.firstColor);
+        self.$store.commit("setSecondColor", res.data.labelSetting.secondColor);
+        self.$store.commit("setThirdColor", res.data.labelSetting.thirdColor);
+        self.$store.commit("setFourthColor", res.data.labelSetting.fourthColor);
+        $("#labelSettingModal").modal("hide");
+      });
     },
     logout() {
       let self = this;

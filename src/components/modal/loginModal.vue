@@ -28,7 +28,7 @@
                 type="text"
                 class="form-control"
                 :class="{ 'is-invalid': accountError }"
-                placeholder="請輸入帳號"
+                placeholder="請輸入 Email"
                 required
                 v-model="account"
               />
@@ -82,7 +82,7 @@
 <script>
 export default {
   name: "loginModal",
-  props: ["serverErrorMsg"],
+  props: ["loginErrorMsg"],
   data() {
     return {
       account: "",
@@ -91,6 +91,7 @@ export default {
       password: "",
       passwordError: false,
       passwordErrorMsg: "",
+      serverErrorMsg: "",
     };
   },
   watch: {
@@ -98,18 +99,19 @@ export default {
       if (this.account) {
         this.accountError = false;
         this.accountErrorMsg = "";
-      } else {
-        this.accountError = true;
-        this.accountErrorMsg = "帳號未填";
       }
     },
     password() {
       if (this.password) {
         this.passwordError = false;
         this.passwordErrorMsg = "";
-      } else {
+      }
+    },
+    loginErrorMsg() {
+      this.serverErrorMsg = this.loginErrorMsg;
+      if (this.serverErrorMsg) {
+        this.accountError = true;
         this.passwordError = true;
-        this.passwordErrorMsg = "密碼未填";
       }
     },
   },
@@ -142,6 +144,7 @@ export default {
     },
     resetForm() {
       let self = this;
+      setTimeout(() => {
       self.account = "";
       self.accountError = false;
       self.accountErrorMsg = "";
@@ -149,11 +152,16 @@ export default {
       self.passwordError = false;
       self.passwordErrorMsg = "";
       self.serverErrorMsg = "";
+      }, 1000);
     },
     submitEvent() {
       let self = this;
+      let queryItem = {
+        account: self.account,
+        password: self.password,
+      };
       if (self.checkLoginInput()) {
-        self.$emit("submitEvent");
+        self.$emit("submitEvent", queryItem);
       }
     },
   },

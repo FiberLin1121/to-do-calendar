@@ -90,6 +90,7 @@
 <script>
 export default {
   name: "taskCreateModal",
+  props:["pickedTask"],
   data() {
     return {
       task: "",
@@ -99,12 +100,7 @@ export default {
       labelTypeError: false,
       labelTypeErrorMsg: "",
       serverErrorMsg: "",
-      colorList: [
-        { id: "TC1", name: "firstColor", value: "#e53e3e" },
-        { id: "TC2", name: "secondColor", value: "#dd6b20" },
-        { id: "TC3", name: "thirdColor", value: "#d69e2e" },
-        { id: "TC4", name: "fourthColor", value: "#38a169" },
-      ],
+      colorList: [],
     };
   },
   mounted() {},
@@ -121,6 +117,14 @@ export default {
         this.labelTypeErrorMsg = "";
       }
     },
+    pickedTask(){
+      this.colorList = [
+        { id: "TC1", name: "firstColor", value: this.$store.state.firstColor },
+        { id: "TC2", name: "secondColor", value: this.$store.state.secondColor },
+        { id: "TC3", name: "thirdColor", value: this.$store.state.thirdColor },
+        { id: "TC4", name: "fourthColor", value: this.$store.state.fourthColor },
+      ]
+    }
   },
   methods: {
     closeTaskCreateModal() {

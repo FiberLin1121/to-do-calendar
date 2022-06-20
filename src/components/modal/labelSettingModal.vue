@@ -24,7 +24,7 @@
           <div class="container">
             <div class="text-left">
               <h4>時間管理的四象限</h4>
-              <div>請選擇標籤顏色 </div>
+              <div>請選擇標籤顏色</div>
               <button
                 type="button"
                 class="btn btn-sm btn-light border mt-2"
@@ -82,7 +82,7 @@
               >
                 <h4>第三象限</h4>
                 <div>緊急不重要</div>
-                 <div class="reminder-msg">有效率集中處理</div>
+                <div class="reminder-msg">有效率集中處理</div>
                 <input
                   type="color"
                   class="mt-2"
@@ -115,30 +115,63 @@
 </template>
 
 <script>
+import { apiLabelDefaultValueQuery } from "../../api/index.js";
 export default {
   name: "labelSettingModal",
+  props: ["user"],
   data() {
     return {
-      firstColor: "#e53e3e",
-      secondColor: "#dd6b20",
-      thirdColor: "#d69e2e",
-      fourthColor: "#38a169",
+      firstColor: "",
+      secondColor: "",
+      thirdColor: "",
+      fourthColor: "",
+      defaultLabel:{}
     };
+  },
+  mounted() {
+    apiLabelDefaultValueQuery().then((res) => {
+      if(res.data){
+        this.defaultLabel.firstColor = res.data.firstColor;
+        this.defaultLabel.secondColor = res.data.secondColor;
+        this.defaultLabel.thirdColor = res.data.thirdColor;
+        this.defaultLabel.fourthColor = res.data.fourthColor;
+      }
+    });
+  },
+  watch: {
+    user() {
+      this.firstColor = this.$store.state.firstColor;
+      this.secondColor = this.$store.state.secondColor;
+      this.thirdColor = this.$store.state.thirdColor;
+      this.fourthColor = this.$store.state.fourthColor;
+    },
   },
   methods: {
     closeLabelSettingModal() {
       $("#labelSettingModal").modal("hide");
+      setTimeout(() => {
+        this.firstColor = this.$store.state.firstColor;
+        this.secondColor = this.$store.state.secondColor;
+        this.thirdColor = this.$store.state.thirdColor;
+        this.fourthColor = this.$store.state.fourthColor;
+      }, 1000);
     },
     resetColorsToDefault() {
       let self = this;
-      self.firstColor = "#e53e3e";
-      self.secondColor = "#dd6b20";
-      self.thirdColor = "#d69e2e";
-      self.fourthColor = "#38a169";
+      self.firstColor =  self.defaultLabel.firstColor;
+      self.secondColor = self.defaultLabel.secondColor;
+      self.thirdColor = self.defaultLabel.thirdColor;
+      self.fourthColor = self.defaultLabel.fourthColor;
     },
     submitEvent() {
       let self = this;
-      self.$emit("submitEvent");
+      let editItem = {
+        firstColor: self.firstColor,
+        secondColor: self.secondColor,
+        thirdColor: self.thirdColor,
+        fourthColor: self.fourthColor,
+      };
+      self.$emit("submitEvent", editItem);
     },
   },
 };

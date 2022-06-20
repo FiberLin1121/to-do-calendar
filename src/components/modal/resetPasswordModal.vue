@@ -105,7 +105,6 @@ export default {
       serverErrorMsg: "",
     };
   },
-  computed: {},
   watch: {
     oldPassword() {
       if (this.oldPassword) {

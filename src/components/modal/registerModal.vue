@@ -14,8 +14,8 @@
           <button
             type="button"
             class="close"
-            data-dismiss="modal"
             aria-label="Close"
+            @click="closeRegisterModal"
           >
             <span aria-hidden="true">&times;</span>
           </button>
@@ -28,18 +28,18 @@
                 type="text"
                 class="form-control"
                 :class="{ 'is-invalid': accountError }"
-                placeholder="請輸入帳號"
+                placeholder="請輸入 Email"
                 v-model="account"
               />
               <div class="error-msg">{{ accountErrorMsg }}</div>
             </div>
             <div class="form-group">
-              <label for="inputEmail1">暱稱</label>
+              <label for="inputEmail1">名字</label>
               <input
                 type="text"
                 class="form-control"
                 :class="{ 'is-invalid': nameError }"
-                placeholder="請輸入暱稱"
+                placeholder="請輸入名字"
                 v-model="name"
               />
               <div class="error-msg">{{ nameErrorMsg }}</div>
@@ -55,6 +55,7 @@
               />
               <div class="error-msg">{{ passwordErrorMsg }}</div>
             </div>
+            <div class="error-msg">{{ serverErrorMsg }}</div>
           </form>
         </div>
         <div class="modal-footer">
@@ -66,7 +67,11 @@
             @click="openLoginModal"
             >切換到登入</a
           >
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            @click="closeRegisterModal"
+          >
             取消
           </button>
           <button
@@ -85,7 +90,7 @@
 <script>
 export default {
   name: "registerModal",
-  props:["serverErrorMsg"],
+  props: ["registerErrorMsg"],
   data() {
     return {
       account: "",
@@ -97,6 +102,7 @@ export default {
       password: "",
       passwordError: false,
       passwordErrorMsg: "",
+      serverErrorMsg: "",
     };
   },
   watch: {
@@ -118,6 +124,12 @@ export default {
         this.passwordErrorMsg = "";
       }
     },
+    registerErrorMsg() {
+      this.serverErrorMsg = this.registerErrorMsg;
+      if (this.serverErrorMsg) {
+        this.accountError = true;
+      }
+    },
   },
   methods: {
     openLoginModal() {
@@ -132,6 +144,7 @@ export default {
     checkRegisterInput() {
       let self = this;
       let validity = true;
+
       if (!self.name) {
         self.nameError = true;
         self.nameErrorMsg = "暱稱未填";
@@ -142,6 +155,14 @@ export default {
         self.accountErrorMsg = "帳號未填";
         validity = false;
       }
+
+      let emailExp = new RegExp("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,}$");
+      if (!self.account.match(emailExp)) {
+        self.accountError = true;
+        self.accountErrorMsg = "Email 格式不符";
+        validity = false;
+      }
+
       if (!self.password) {
         self.passwordError = true;
         self.passwordErrorMsg = "密碼未填";
@@ -151,21 +172,28 @@ export default {
     },
     resetForm() {
       let self = this;
-      self.name = "";
-      self.nameError = false;
-      self.nameErrorMsg = "";
-      self.account = "";
-      self.accountError = false;
-      self.accountErrorMsg = "";
-      self.password = "";
-      self.passwordError = false;
-      self.passwordErrorMsg = "";
-      self.serverErrorMsg = "";
+      setTimeout(() => {
+        self.name = "";
+        self.nameError = false;
+        self.nameErrorMsg = "";
+        self.account = "";
+        self.accountError = false;
+        self.accountErrorMsg = "";
+        self.password = "";
+        self.passwordError = false;
+        self.passwordErrorMsg = "";
+        self.serverErrorMsg = "";
+      }, 1000);
     },
-    submitEvent(){
+    submitEvent() {
       let self = this;
+      let createItem = {
+        account: self.account,
+        name: self.name,
+        password: self.password,
+      };
       if (self.checkRegisterInput()) {
-        self.$emit("submitEvent");
+        self.$emit("submitEvent", createItem);
       }
     },
   },

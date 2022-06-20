@@ -98,12 +98,7 @@ export default {
       checkColorError: false,
       checkColorErrorMsg: "",
       serverErrorMsg: "",
-      colorList: [
-        { id: "TE1", name: "firstColor", value: "#e53e3e" },
-        { id: "TE2", name: "secondColor", value: "#dd6b20" },
-        { id: "TE3", name: "thirdColor", value: "#d69e2e" },
-        { id: "TE4", name: "fourthColor", value: "#38a169" },
-      ],
+      colorList: [],
     };
   },
   mounted() {},
@@ -120,6 +115,14 @@ export default {
         this.checkColorErrorMsg = "";
       }
     },
+    pickedTask(){
+      this.colorList = [
+        { id: "TE1", name: "firstColor", value: this.$store.state.firstColor },
+        { id: "TE2", name: "secondColor", value: this.$store.state.secondColor },
+        { id: "TE3", name: "thirdColor", value: this.$store.state.thirdColor },
+        { id: "TE4", name: "fourthColor", value: this.$store.state.fourthColor },
+      ]
+    }
   },
   methods: {
     closeTaskEditModal() {

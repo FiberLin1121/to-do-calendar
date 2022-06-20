@@ -7,8 +7,10 @@
           class="row flex-column justify-content-center align-items-center"
           style="height: calc(100vh)"
         >
-          <div class="title-have-a-nice-day ">\ Have a nice day ! /</div>
-          <div class="title-hello text-first mt-2 tracking-in-expand"><strong>Hello</strong></div>
+          <div class="title-have-a-nice-day">\ Have a nice day ! /</div>
+          <div class="title-hello text-first mt-2 tracking-in-expand">
+            <strong>Hello</strong>
+          </div>
           <div class="title-todo-Calendar mb-5">To-do Calendar</div>
 
           <!-- Button trigger modal -->
@@ -59,7 +61,7 @@
                 "
               >
                 <div class="display-4">{{ thisYear }}</div>
-                <div class="mb-1" style="font-size: 1.3rem">Calendar</div> 
+                <div class="mb-1" style="font-size: 1.3rem">Calendar</div>
                 <div class="d-flex justify-content-between">
                   <span></span>
                   <span>M</span>
@@ -315,11 +317,11 @@
 
     <!-- modal section -->
     <login-modal
-      :serverErrorMsg="serverErrorMsg"
+      :loginErrorMsg="loginErrorMsg"
       @submitEvent="sendUserLogin"
     ></login-modal>
     <register-modal
-      :serverErrorMsg="serverErrorMsg"
+      :registerErrorMsg="registerErrorMsg"
       @submitEvent="sendUserRegister"
     ></register-modal>
     <!-- /modal section -->
@@ -330,6 +332,7 @@
 import { mapState } from "vuex";
 import loginModal from "../modal/loginModal.vue";
 import registerModal from "../modal/registerModal.vue";
+import { apiUserRegister, apiUserLogin } from "../../api/index.js";
 
 export default {
   name: "index",
@@ -340,7 +343,8 @@ export default {
   data() {
     return {
       thisYear: new Date().getFullYear(),
-      serverErrorMsg: "",
+      loginErrorMsg: "",
+      registerErrorMsg: "",
     };
   },
   created() {
@@ -372,37 +376,38 @@ export default {
       let self = this;
       self.$router.push("innerPage/todoLists");
     },
-    sendUserLogin() {
+    sendUserLogin(queryitem) {
       let self = this;
-      let result = true;
-      //send login API to server
-      if (result) {
-        self.$store.commit("isLoginModalOpen", false);
-        self.$store.commit("setUserId", "user02");
-        self.$store.commit("setUserName", "test");
-        self.$store.commit("setToken", "123");
-        self.$store.commit("setStoreToSession");
-        self.$store.commit("isLoading", true);
-        self.$router.push("innerPage/todoLists");
-      } else {
-        self.serverErrorMsg = "帳號或密碼錯誤";
-      }
+      self.loginErrorMsg = "";
+      apiUserLogin(queryitem.account, queryitem.password)
+        .then((res) => {
+          self.$store.commit("isLoginModalOpen", false);
+          self.$store.commit("setUserId", res.data.id);
+          self.$store.commit("setUserName", res.data.name);
+          self.$store.commit("setToken", "123");
+          self.$store.commit("setStoreToSession");
+          self.$store.commit("isLoading", true);
+          self.$router.push("innerPage/todoLists");
+        })
+        .catch((err) => {
+          self.loginErrorMsg = err.response.data;
+        });
     },
-    sendUserRegister() {
+    sendUserRegister(createItem) {
       let self = this;
-      let result = true;
-      //send register API to server
-      if (result) {
-        $("#registerModal").modal("hide");
-        self.$store.commit("setUserId", "user01");
-        self.$store.commit("setUserName", "test");
-        self.$store.commit("setToken", "123");
-        self.$store.commit("setStoreToSession");
-        self.$store.commit("isLoading", true);
-        self.$router.push("innerPage/todoLists");
-      } else {
-        self.serverErrorMsg = "帳號重複";
-      }
+      apiUserRegister(createItem.account, createItem.name, createItem.password)
+        .then((res) => {
+          $("#registerModal").modal("hide");
+          self.$store.commit("setUserId", res.data.id);
+          self.$store.commit("setUserName", res.data.name);
+          self.$store.commit("setToken", "123");
+          self.$store.commit("setStoreToSession");
+          self.$store.commit("isLoading", true);
+          self.$router.push("innerPage/todoLists");
+        })
+        .catch((err) => {
+          self.registerErrorMsg = err.response.data;
+        });
     },
   },
 };
@@ -453,7 +458,7 @@ html * {
   animation: material 2s ease-in infinite;
   width: 100px;
   height: 100px;
-  background : url("~@/assets/images/22573317-04.png") repeat center center;
+  background: url("~@/assets/images/22573317-04.png") repeat center center;
 }
 
 .material-2 {
@@ -464,7 +469,7 @@ html * {
   animation: material 2s ease-in infinite;
   width: 150px;
   height: 150px;
-  background : url("~@/assets/images/22573317-01.png") repeat center center;
+  background: url("~@/assets/images/22573317-01.png") repeat center center;
   animation-delay: 0.5s;
 }
 
@@ -476,8 +481,8 @@ html * {
   animation: material 2s ease-in infinite;
   width: 100px;
   height: 100px;
-  background : url("~@/assets/images/22573317-01.png") repeat center center;
-   animation-delay: 1.5s;
+  background: url("~@/assets/images/22573317-01.png") repeat center center;
+  animation-delay: 1.5s;
 }
 
 .material-4 {
@@ -488,7 +493,7 @@ html * {
   animation: material 2s ease-in infinite;
   width: 100px;
   height: 100px;
-  background : url("~@/assets/images/22573317-01.png") repeat center center;
+  background: url("~@/assets/images/22573317-01.png") repeat center center;
   animation-delay: 0.2s;
 }
 
@@ -500,7 +505,7 @@ html * {
   animation: material 2s ease-in infinite;
   width: 200px;
   height: 200px;
-  background : url("~@/assets/images/22573317-04.png") repeat center center;
+  background: url("~@/assets/images/22573317-04.png") repeat center center;
   animation-delay: 1.1s;
 }
 
@@ -512,7 +517,7 @@ html * {
   animation: material 2s ease-in infinite;
   width: 200px;
   height: 200px;
-  background : url("~@/assets/images/22573317-03.png") repeat center center;
+  background: url("~@/assets/images/22573317-03.png") repeat center center;
   animation-delay: 0.8s;
 }
 
@@ -524,7 +529,7 @@ html * {
   animation: material 2s ease-in infinite;
   width: 100px;
   height: 100px;
-  background : url("~@/assets/images/22573317-01.png") repeat center center;
+  background: url("~@/assets/images/22573317-01.png") repeat center center;
   animation-delay: 1.8s;
 }
 
@@ -532,12 +537,11 @@ html * {
   0% {
     opacity: 0;
   }
-  50%{
+  50% {
     opacity: 1;
   }
-  100%{
+  100% {
     opacity: 0;
   }
 }
-
 </style>

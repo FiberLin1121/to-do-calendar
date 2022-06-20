@@ -10,6 +10,10 @@ export default new Vuex.Store({
     userId: sessionStorage.getItem("userId") || "",
     userName: sessionStorage.getItem("userName") || "",
     token: sessionStorage.getItem("token") || "",
+    firstColor: sessionStorage.getItem("firstColor") || "",
+    secondColor: sessionStorage.getItem("secondColor") || "",
+    thirdColor: sessionStorage.getItem("thirdColor") || "",
+    fourthColor: sessionStorage.getItem("fourthColor") || "",
   },
   mutations: {
     isLoginModalOpen(state, status) {
@@ -26,6 +30,18 @@ export default new Vuex.Store({
     },
     setToken(state, token) {
       state.token = token;
+    },
+    setFirstColor(state, firstColor) {
+      state.firstColor = firstColor;
+    },
+    setSecondColor(state, secondColor) {
+      state.secondColor = secondColor;
+    },
+    setThirdColor(state, thirdColor) {
+      state.thirdColor = thirdColor;
+    },
+    setFourthColor(state, fourthColor) {
+      state.fourthColor = fourthColor;
     },
     setStoreToSession(state) {
       sessionStorage.setItem("userId", state.userId);

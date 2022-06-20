@@ -95,8 +95,8 @@
                     :style="{
                       borderLeftColor: renderLabelColorValue(item.labelType),
                     }"
-                    v-for="(item, index) in todoList"
-                    :key="index"
+                    v-for="(item) in todoList"
+                    :key="item.taskId"
                   >
                     <div class="form-group form-check d-flex">
                       <input
@@ -190,8 +190,8 @@
                   <div
                     class="task-label mb-3 mx-4 d-flex bg-done"
                     style="border-left-color: #93d2d6"
-                    v-for="(item, index) in doneList"
-                    :key="index"
+                    v-for="(item) in doneList"
+                    :key="item.taskId"
                   >
                     <div class="form-group form-check d-flex">
                       <input
@@ -250,7 +250,10 @@
     </section>
 
     <!-- modal section -->
-    <task-create-modal @submitEvent="sendCreateTask"></task-create-modal>
+    <task-create-modal
+      :pickedTask="copyTask"
+      @submitEvent="sendCreateTask"
+    ></task-create-modal>
     <task-edit-modal
       :pickedTask="copyTask"
       :path="path"
@@ -339,6 +342,8 @@ export default {
   },
   methods: {
     openTaskCreateModal() {
+      let self = this;
+      self.copyTask ={};
       $("#taskCreateModal").modal({ backdrop: "static", keyboard: false });
     },
     openTaskEditModal(item) {
@@ -414,15 +419,15 @@ export default {
         self.todoList.splice(idx, 1);
         self.doneList.push(item);
         apiTodoListOrderUpdate(
-        self.$store.state.userId,
-        self.pickedDate,
-        self.todoListId,
-        self.todoList,
-        self.doneList
-      ).then((res) => {
-        self.todoList = res.data.todoList;
-        self.doneList = res.data.doneList;
-      });
+          self.$store.state.userId,
+          self.pickedDate,
+          self.todoListId,
+          self.todoList,
+          self.doneList
+        ).then((res) => {
+          self.todoList = res.data.todoList;
+          self.doneList = res.data.doneList;
+        });
       }
     },
     onDoneListCheckboxClick(item) {
@@ -432,15 +437,15 @@ export default {
         self.doneList.splice(idx, 1);
         self.todoList.push(item);
         apiTodoListOrderUpdate(
-        self.$store.state.userId,
-        self.pickedDate,
-        self.todoListId,
-        self.todoList,
-        self.doneList
-      ).then((res) => {
-        self.todoList = res.data.todoList;
-        self.doneList = res.data.doneList;
-      });
+          self.$store.state.userId,
+          self.pickedDate,
+          self.todoListId,
+          self.todoList,
+          self.doneList
+        ).then((res) => {
+          self.todoList = res.data.todoList;
+          self.doneList = res.data.doneList;
+        });
       }
     },
     getdata(evt) {},
@@ -459,19 +464,20 @@ export default {
     },
     formatDate() {},
     renderLabelColorValue(color) {
+      let self = this;
       let value = "";
       switch (color) {
         case "firstColor":
-          value = "#e53e3e";
+          value = self.$store.state.firstColor;
           break;
         case "secondColor":
-          value = "#dd6b20";
+          value = self.$store.state.secondColor;
           break;
         case "thirdColor":
-          value = "#d69e2e";
+          value = self.$store.state.thirdColor;
           break;
         case "fourthColor":
-          value = "#38a169";
+          value = self.$store.state.fourthColor;
       }
       return value;
     },
