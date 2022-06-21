@@ -83,8 +83,10 @@
     <!-- /body -->
 
     <!-- modal section -->
-    <user-edit-modal @submitEvent="sendEditUser"> </user-edit-modal>
+    <user-edit-modal :user="copyUser" @submitEvent="sendEditUser">
+    </user-edit-modal>
     <reset-password-modal
+      :resetPasswordErrorMsg="resetPasswordErrorMsg"
       @submitEvent="sendResetPassword"
     ></reset-password-modal>
     <label-setting-modal
@@ -99,7 +101,11 @@
 import userEditModal from "../modal/userEditModal.vue";
 import resetPasswordModal from "../modal/resetPasswordModal.vue";
 import labelSettingModal from "../modal/labelSettingModal.vue";
-import { apiUserQuery, apiLabelSettingUpdate } from "../../api/index.js";
+import {
+  apiLabelSettingUpdate,
+  apiUserNameUpdate,
+  apiUserPasswordUpdate,
+} from "../../api/index.js";
 
 export default {
   name: "innerPage",
@@ -110,21 +116,24 @@ export default {
   },
   data() {
     return {
-      user: {},
+      user: {
+        userId: this.$store.state.userId,
+        email: this.$store.state.account,
+        name: this.$store.state.userName,
+        firstColor: this.$store.state.firstColor,
+        secondColor: this.$store.state.secondColor,
+        thirdColor: this.$store.state.thirdColor,
+        fourthColor: this.$store.state.fourthColor,
+      },
       copyUser: {},
+      resetPasswordErrorMsg: "",
     };
-  },
-  mounted() {
-    apiUserQuery(this.$store.state.userId).then((res) => {
-      this.user = res.data;
-      this.$store.commit("setFirstColor", res.data.labelSetting.firstColor);
-      this.$store.commit("setSecondColor", res.data.labelSetting.secondColor);
-      this.$store.commit("setThirdColor", res.data.labelSetting.thirdColor);
-      this.$store.commit("setFourthColor", res.data.labelSetting.fourthColor);
-    });
   },
   methods: {
     openUserEditModal() {
+      let self = this;
+      self.copyUser = JSON.parse(JSON.stringify(self.user));
+      console.log("user=" + JSON.stringify(self.user));
       $("#userEditModal").modal({ backdrop: "static", keyboard: false });
     },
     openLabelSettingModal() {
@@ -132,14 +141,31 @@ export default {
       self.copyUser = JSON.parse(JSON.stringify(self.user));
       $("#labelSettingModal").modal({ backdrop: "static", keyboard: false });
     },
-    sendEditUser() {
-      console.log("sendEditUser");
+    sendEditUser(editItem) {
+      let self = this;
+      apiUserNameUpdate(self.$store.state.userId, editItem.name).then((res) => {
+        self.user.name = res.data.name;
+        self.$store.commit("setUserName", res.data.name);
+        sessionStorage.setItem("userName", res.data.name);
+        $("#userEditModal").modal("hide");
+      });
     },
-    sendResetPassword() {
+    sendResetPassword(editItem) {
       console.log("sendResetPassword");
+      let self = this;
+      apiUserPasswordUpdate(
+        self.$store.state.userId,
+        editItem.oldPassword,
+        editItem.newPassword
+      )
+        .then((res) => {
+          $("#resetPasswordModal").modal("hide");
+        })
+        .catch((err) => {
+          self.resetPasswordErrorMsg = err.response.data;
+        });
     },
     sendEditLabelSetting(editItem) {
-      console.log("sendEditLabelSetting");
       let self = this;
       apiLabelSettingUpdate(
         self.$store.state.userId,
@@ -148,7 +174,6 @@ export default {
         editItem.thirdColor,
         editItem.fourthColor
       ).then((res) => {
-        console.log("res.status=" + res.status);
         self.user = res.data;
         self.$store.commit("setFirstColor", res.data.labelSetting.firstColor);
         self.$store.commit("setSecondColor", res.data.labelSetting.secondColor);

@@ -27,7 +27,7 @@
               <input
                 type="text"
                 class="form-control"
-                v-model="userId"
+                v-model="user.email"
                 disabled
               />
             </div>
@@ -38,7 +38,7 @@
                 class="form-control"
                 :class="{ 'is-invalid': nameError }"
                 placeholder="請輸入暱稱"
-                v-model="userName"
+                v-model="name"
               />
               <div class="error-msg">{{ nameErrorMsg }}</div>
             </div>
@@ -75,22 +75,23 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
 export default {
   name: "userEditModal",
+  props: ["user"],
   data() {
     return {
+      name: "",
       nameError: false,
       nameErrorMsg: "",
       serverErrorMsg: "",
     };
   },
-  computed: {
-    ...mapState(["userId", "userName"]),
-  },
   watch: {
-    userName() {
-      if (this.userName) {
+    user(){
+      this.name = this.$store.state.userName;
+    },
+    name() {
+      if (this.name) {
         this.nameError = false;
         this.nameErrorMsg = "";
       }
@@ -108,7 +109,7 @@ export default {
     checkInput() {
       let self = this;
       let validity = true;
-      if (!self.userName) {
+      if (!self.name) {
         self.nameError = true;
         self.nameErrorMsg = "暱稱未填";
         validity = false;
@@ -123,8 +124,11 @@ export default {
     },
     submitEvent() {
       let self = this;
+      let editItem = {
+        name: self.name,
+      };
       if (self.checkInput()) {
-        self.$emit("submitEvent");
+        self.$emit("submitEvent", editItem);
       }
     },
   },

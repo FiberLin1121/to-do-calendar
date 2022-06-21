@@ -76,6 +76,25 @@ export const apiLabelSettingUpdate = (userId, firstColor, secondColor, thirdColo
     },
   });
 
+  export const apiUserNameUpdate = (userId, name) =>
+  instance.patch(`/users/${userId}`, {
+    op: "replace",
+    path: "/name",
+    value: {
+      name: name,
+    },
+  });
+
+  export const apiUserPasswordUpdate = (userId, oldPassword, newPassword) =>
+  instance.patch(`/users/${userId}`, {
+    op: "replace",
+    path: "/password",
+    value: {
+      oldPassword: oldPassword,
+      newPassword: newPassword
+    },
+  });
+
 // Habits 相關的 api
 export const apiHabitsQuery = (userId) =>
   instance.get(`/users/${userId}/habits`);

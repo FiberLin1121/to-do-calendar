@@ -91,6 +91,7 @@
 <script>
 export default {
   name: "resetPasswordModal",
+  props: ["resetPasswordErrorMsg"],
   data() {
     return {
       oldPassword: "",
@@ -122,6 +123,12 @@ export default {
       if (this.confirmPassword) {
         this.confirmPasswordError = false;
         this.confirmPasswordErrorMsg = "";
+      }
+    },
+    resetPasswordErrorMsg() {
+      this.serverErrorMsg = this.resetPasswordErrorMsg;
+      if (this.serverErrorMsg) {
+        this.oldPasswordError = true;
       }
     },
   },
@@ -196,8 +203,12 @@ export default {
     },
     submitEvent() {
       let self = this;
+      let editItem = {
+        oldPassword: self.oldPassword,
+        newPassword: self.newPassword
+      };
       if (self.checkInput()) {
-        self.$emit("submitEvent");
+        self.$emit("submitEvent", editItem);
       }
     },
   },

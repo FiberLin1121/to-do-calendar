@@ -383,8 +383,13 @@ export default {
         .then((res) => {
           self.$store.commit("isLoginModalOpen", false);
           self.$store.commit("setUserId", res.data.id);
+          self.$store.commit("setAccount", res.data.email);
           self.$store.commit("setUserName", res.data.name);
           self.$store.commit("setToken", "123");
+          self.$store.commit("setFirstColor", res.data.labelSetting.firstColor);
+          self.$store.commit("setSecondColor", res.data.labelSetting.secondColor);
+          self.$store.commit("setThirdColor", res.data.labelSetting.thirdColor);
+          self.$store.commit("setFourthColor", res.data.labelSetting.fourthColor);
           self.$store.commit("setStoreToSession");
           self.$store.commit("isLoading", true);
           self.$router.push("innerPage/todoLists");
@@ -399,8 +404,13 @@ export default {
         .then((res) => {
           $("#registerModal").modal("hide");
           self.$store.commit("setUserId", res.data.id);
+          self.$store.commit("setAccount", res.data.email);
           self.$store.commit("setUserName", res.data.name);
           self.$store.commit("setToken", "123");
+          self.$store.commit("setFirstColor", res.data.labelSetting.firstColor);
+          self.$store.commit("setSecondColor", res.data.labelSetting.secondColor);
+          self.$store.commit("setThirdColor", res.data.labelSetting.thirdColor);
+          self.$store.commit("setFourthColor", res.data.labelSetting.fourthColor);
           self.$store.commit("setStoreToSession");
           self.$store.commit("isLoading", true);
           self.$router.push("innerPage/todoLists");

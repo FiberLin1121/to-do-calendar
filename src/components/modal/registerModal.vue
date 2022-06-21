@@ -168,6 +168,23 @@ export default {
         self.passwordErrorMsg = "密碼未填";
         validity = false;
       }
+      if (validity) {
+        if (self.password.length < 8 || self.password.length > 30) {
+          self.passwordError = true;
+          self.passwordErrorMsg = "密碼長度必須為8-30碼";
+          validity = false;
+        }
+      }
+      if (validity) {
+        let passwordExp = new RegExp(
+          /^(?=[0-9a-zA-Z]*\d)(?=[0-9a-zA-Z]*[a-zA-Z])[0-9a-zA-Z]{8,30}$/g
+        );
+        if (!self.password.match(passwordExp)) {
+          self.passwordError = true;
+          self.passwordErrorMsg = "密碼必須包含英數字";
+          validity = false;
+        }
+      }
       return validity;
     },
     resetForm() {

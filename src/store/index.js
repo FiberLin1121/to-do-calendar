@@ -8,6 +8,7 @@ export default new Vuex.Store({
     isLoginModalOpen: false,
     isLoading: false,
     userId: sessionStorage.getItem("userId") || "",
+    account: sessionStorage.getItem("account") || "",
     userName: sessionStorage.getItem("userName") || "",
     token: sessionStorage.getItem("token") || "",
     firstColor: sessionStorage.getItem("firstColor") || "",
@@ -24,6 +25,9 @@ export default new Vuex.Store({
     },
     setUserId(state, userId) {
       state.userId = userId;
+    },
+    setAccount(state, account) {
+      state.account = account;
     },
     setUserName(state, userName) {
       state.userName = userName;
@@ -45,13 +49,23 @@ export default new Vuex.Store({
     },
     setStoreToSession(state) {
       sessionStorage.setItem("userId", state.userId);
+      sessionStorage.setItem("account", state.account);
       sessionStorage.setItem("userName", state.userName);
       sessionStorage.setItem("token", state.token);
+      sessionStorage.setItem("firstColor", state.firstColor);
+      sessionStorage.setItem("secondColor", state.secondColor);
+      sessionStorage.setItem("thirdColor", state.thirdColor);
+      sessionStorage.setItem("fourthColor", state.fourthColor);
     },
     removeSession(state) {
       sessionStorage.removeItem("userId", state.userId);
+      sessionStorage.removeItem("account", state.account);
       sessionStorage.removeItem("userName", state.userName);
       sessionStorage.removeItem("token", state.token);
+      sessionStorage.removeItem("firstColor", state.firstColor);
+      sessionStorage.removeItem("secondColor", state.secondColor);
+      sessionStorage.removeItem("thirdColor", state.thirdColor);
+      sessionStorage.removeItem("fourthColor", state.fourthColor);
     },
   },
 });
