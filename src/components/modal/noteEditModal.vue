@@ -45,18 +45,18 @@
             </div>
 
             <div class="mb-3">
-              <div for="maskingTapeRadio" class="mb-2">紙膠帶樣式</div>
+              <div for="tapeStyleRadio" class="mb-2">紙膠帶樣式</div>
               <div class="container">
                 <div class="row d-flex">
                   <div
-                    v-for="item in maskingTapeList"
+                    v-for="item in tapeStyleList"
                     :key="item.id"
                     class="col-2 d-flex custom-control custom-radio mt-2"
                   >
                     <input
                       type="radio"
                       class="custom-control-input"
-                      :class="{ 'is-invalid': maskingTapeError }"
+                      :class="{ 'is-invalid': tapeStyleError }"
                       :id="item.id"
                       name="radio-masking-tape"
                       :value="item.name"
@@ -76,7 +76,7 @@
                   </div>
                 </div>
               </div>
-              <div class="error-msg">{{ maskingTapeErrorMsg }}</div>
+              <div class="error-msg">{{ tapeStyleErrorMsg }}</div>
             </div>
 
             <div class="mb-3">
@@ -143,8 +143,8 @@ export default {
       nameErrorMsg: "",
       bgColorError: false,
       bgColorErrorMsg: "",
-      maskingTapeError: false,
-      maskingTapeErrorMsg: "",
+      tapeStyleError: false,
+      tapeStyleErrorMsg: "",
       serverErrorMsg: "",
       colorList: [
         { id: "NCE1", name: "pink", value: "#f6d8e4" },
@@ -154,7 +154,7 @@ export default {
         { id: "NCE5", name: "blue", value: "#d7ebf4" },
         { id: "NCE6", name: "purple", value: "#e7d4e8" },
       ],
-      maskingTapeList: [
+      tapeStyleList: [
         { id: "NME1", name: "01", value: "masking-tape-01.jpg" },
         { id: "NME2", name: "02", value: "masking-tape-02.jpg" },
         { id: "NME3", name: "03", value: "masking-tape-03.jpg" },
@@ -178,10 +178,10 @@ export default {
         this.bgColorErrorMsg = "";
       }
     },
-    "pickedNote.maskingTape"() {
-      if (this.pickedNote.maskingTape) {
-        this.maskingTapeError = false;
-        this.maskingTapeErrorMsg = "";
+    "pickedNote.tapeStyle"() {
+      if (this.pickedNote.tapeStyle) {
+        this.tapeStyleError = false;
+        this.tapeStyleErrorMsg = "";
       }
     },
   },
@@ -208,8 +208,8 @@ export default {
         validity = false;
       }
       if (!self.pickedNote.tapeStyle) {
-        self.maskingTapeError = true;
-        self.maskingTapeErrorMsg = "紙膠帶樣式未選";
+        self.tapeStyleError = true;
+        self.tapeStyleErrorMsg = "紙膠帶樣式未選";
         validity = false;
       }
       if (!self.pickedNote.bgColor) {
@@ -221,9 +221,8 @@ export default {
     },
     submitEvent() {
       let self = this;
-      console.log("content="+self.pickedNote.content);
       if (self.checkNoteInput()) {
-        self.$emit("submitEvent");
+        self.$emit("submitEvent", self.pickedNote);
       }
     },
   },

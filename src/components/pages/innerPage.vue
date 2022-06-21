@@ -184,9 +184,14 @@ export default {
     },
     logout() {
       let self = this;
-      self.$store.commit("userId", "");
-      self.$store.commit("userName", "");
-      self.$store.commit("token", "");
+      self.$store.commit("setUserId", "");
+      self.$store.commit("setAccount", "");
+      self.$store.commit("setUserName", "");
+      self.$store.commit("setToken", "");
+      self.$store.commit("setFirstColor", "");
+      self.$store.commit("setSecondColor", "");
+      self.$store.commit("setThirdColor", "");
+      self.$store.commit("setFourthColor", "");
       self.$store.commit("removeSession");
       self.$router.push("/");
     },

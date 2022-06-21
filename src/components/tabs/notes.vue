@@ -20,14 +20,14 @@
           @start="drag = true"
           @end="drag = false"
           :move="getdata"
-          @update="datadragEnd"
+          @change="dragColumn"
           class="list-group mr-4"
           group="notes"
         >
           <transition-group type="transition" name="!drag ? 'flip-list' : null">
             <div
               v-for="item in list1"
-              :key="item.id"
+              :key="item.noteId"
               class="note p-5 mb-5"
               :style="{ backgroundColor: item.bgColor }"
             >
@@ -82,14 +82,14 @@
           @start="drag = true"
           @end="drag = false"
           :move="getdata"
-          @update="datadragEnd"
+          @change="dragColumn"
           class="list-group mr-3"
           group="notes"
         >
           <transition-group type="transition" name="!drag ? 'flip-list' : null">
             <div
               v-for="item in list2"
-              :key="item.id"
+              :key="item.noteId"
               class="note p-5 mb-5"
               :style="{ backgroundColor: item.bgColor }"
             >
@@ -144,14 +144,14 @@
           @start="drag = true"
           @end="drag = false"
           :move="getdata"
-          @update="datadragEnd"
+          @change="dragColumn"
           class="list-group mr-3"
           group="notes"
         >
           <transition-group type="transition" name="!drag ? 'flip-list' : null">
             <div
               v-for="item in list3"
-              :key="item.id"
+              :key="item.noteId"
               class="note p-5 mb-5"
               :style="{ backgroundColor: item.bgColor }"
             >
@@ -206,14 +206,14 @@
           @start="drag = true"
           @end="drag = false"
           :move="getdata"
-          @update="datadragEnd"
+          @change="dragColumn"
           class="list-group mr-3"
           group="notes"
         >
           <transition-group type="transition" name="!drag ? 'flip-list' : null">
             <div
               v-for="item in list4"
-              :key="item.id"
+              :key="item.noteId"
               class="note p-5 mb-5"
               :style="{ backgroundColor: item.bgColor }"
             >
@@ -266,7 +266,7 @@
     <!-- modal section -->
     <note-create-modal @submitEvent="sendCreateNote"></note-create-modal>
     <note-edit-modal
-      :pickedNote="pickedNote"
+      :pickedNote="copyNote"
       @submitEvent="sendEditNote"
     ></note-edit-modal>
     <delete-modal
@@ -283,7 +283,13 @@ import noteCreateModal from "../modal/noteCreateModal.vue";
 import noteEditModal from "../modal/noteEditModal.vue";
 import deleteModal from "../modal/common/deledeModal.vue";
 import draggable from "vuedraggable";
-
+import {
+  apiNotesQuery,
+  apiNoteAdd,
+  apiNoteUpdate,
+  apiNoteDelete,
+  apiNotesOrderUpdate,
+} from "../../api/index.js";
 export default {
   components: {
     "note-create-modal": noteCreateModal,
@@ -293,75 +299,39 @@ export default {
   },
   data() {
     return {
-      list1: [
-        {
-          id: "N01",
-          name: "title1",
-          content: "aaa",
-          bgColor: "#f7e3cb",
-          tapeStyle: "06",
-        },
-        {
-          id: "N05",
-          name: "title5",
-          content: "eee",
-          bgColor: "#d7ebf4",
-          tapeStyle: "04",
-        },
-      ],
-      list2: [
-        {
-          id: "N02",
-          name: "title2",
-          content: "bbb",
-          bgColor: "#ddeee8",
-          tapeStyle: "02",
-        },
-        {
-          id: "N07",
-          name: "title7",
-          content: "fff",
-          bgColor: "#e7d4e8",
-          tapeStyle: "05",
-        },
-      ],
-      list3: [
-        {
-          id: "N03",
-          name: "title3",
-          content: "ccc",
-          bgColor: "#f6d8e4",
-          tapeStyle: "03",
-        },
-        {
-          id: "N08",
-          name: "title8",
-          content: "fff",
-          bgColor: "#d7ebf4",
-          tapeStyle: "01",
-        },
-      ],
-      list4: [
-        {
-          id: "N04",
-          name: "title4",
-          content: "ddd",
-          bgColor: "#fff8b7",
-          tapeStyle: "04",
-        },
-        {
-          id: "N06",
-          name: "title6",
-          content: "ddd",
-          bgColor: "#ddeee8",
-          tapeStyle: "02",
-        },
-      ],
+      list1: [],
+      list2: [],
+      list3: [],
+      list4: [],
       pickedNote: {},
+      copyNote: {},
+      path: "",
       modalTitle: "便條貼",
     };
   },
-  mounted() {},
+  mounted() {
+    apiNotesQuery(this.$store.state.userId).then((res) => {
+      if (res.data) {
+        this.list1 = res.data.list1;
+        this.list2 = res.data.list2;
+        this.list3 = res.data.list3;
+        this.list4 = res.data.list4;
+      }
+    });
+  },
+  watch: {
+    pickedNote() {
+      if (this.list1.includes(this.pickedNote)) {
+        this.path = "list1";
+      } else if (this.list2.includes(this.pickedNote)) {
+        this.path = "list2";
+      } else if (this.list3.includes(this.pickedNote)) {
+        this.path = "list3";
+      } else if (this.list4.includes(this.pickedNote)) {
+        this.path = "list4";
+      }
+    },
+  },
   computed: {
     dragOptions() {
       return {
@@ -379,6 +349,7 @@ export default {
     openNoteEditModal(item) {
       let self = this;
       self.pickedNote = item;
+      self.copyNote = JSON.parse(JSON.stringify(self.pickedNote));
       $("#noteEditModal").modal({ backdrop: "static", keyboard: false });
     },
     openNoteDeleteModal(item) {
@@ -386,21 +357,64 @@ export default {
       self.pickedNote = item;
       $("#deleteModal").modal({ backdrop: "static", keyboard: false });
     },
-    sendCreateNote() {
-      console.log("sendCreateNote");
+    sendCreateNote(createItem) {
+      let self = this;
+      apiNoteAdd(
+        self.$store.state.userId,
+        createItem.name,
+        createItem.content,
+        createItem.bgColor,
+        createItem.tapeStyle
+      ).then((res) => {
+        self.list1 = res.data.list1;
+        self.list2 = res.data.list2;
+        self.list3 = res.data.list3;
+        self.list4 = res.data.list4;
+        $("#noteCreateModal").modal("hide");
+      });
     },
-    sendEditNote() {
-      console.log("sendEditNote");
+    sendEditNote(editItem) {
+      let self = this;
+      apiNoteUpdate(
+        self.$store.state.userId,
+        self.path,
+        editItem.noteId,
+        editItem.name,
+        editItem.content,
+        editItem.bgColor,
+        editItem.tapeStyle
+      ).then((res) => {
+        self.list1 = res.data.list1;
+        self.list2 = res.data.list2;
+        self.list3 = res.data.list3;
+        self.list4 = res.data.list4;
+        $("#noteEditModal").modal("hide");
+      });
     },
-    sendDeleteNote() {
-      console.log("sendDeleteNote");
+    sendDeleteNote(deleteItem) {
+      let self = this;
+      apiNoteDelete(
+        self.$store.state.userId,
+        self.path,
+        deleteItem.noteId
+      ).then((res) => {
+        self.list1 = res.data.list1;
+        self.list2 = res.data.list2;
+        self.list3 = res.data.list3;
+        self.list4 = res.data.list4;
+        $("#deleteModal").modal("hide");
+      });
     },
-    getdata(evt) {
-      console.log(evt.draggedContext.element.id);
-    },
-    datadragEnd(evt) {
-      console.log("拖動前的索引 :" + evt.oldIndex);
-      console.log("拖動後的索引 :" + evt.newIndex);
+    getdata(evt) {},
+    dragColumn(evt) {
+      let self = this;
+      apiNotesOrderUpdate(
+        self.$store.state.userId,
+        self.list1,
+        self.list2,
+        self.list3,
+        self.list4
+      ).then((res) => {});
     },
   },
 };

@@ -46,22 +46,22 @@
             </div>
 
             <div class="mb-3">
-              <div for="maskingTapeRadio" class="mb-2">紙膠帶樣式</div>
+              <div for="tapeStyleRadio" class="mb-2">紙膠帶樣式</div>
               <div class="container">
                 <div class="row d-flex">
                   <div
-                    v-for="item in maskingTapeList"
+                    v-for="item in tapeStyleList"
                     :key="item.id"
                     class="col-2 d-flex custom-control custom-radio mt-2"
                   >
                     <input
                       type="radio"
                       class="custom-control-input"
-                      :class="{ 'is-invalid': maskingTapeError }"
+                      :class="{ 'is-invalid': tapeStyleError }"
                       :id="item.id"
                       name="radio-masking-tape"
                       :value="item.name"
-                      v-model="maskingTape"
+                      v-model="tapeStyle"
                       required
                     />
                     <label
@@ -77,7 +77,7 @@
                   </div>
                 </div>
               </div>
-              <div class="error-msg">{{ maskingTapeErrorMsg }}</div>
+              <div class="error-msg">{{ tapeStyleErrorMsg }}</div>
             </div>
 
             <div class="mb-3">
@@ -147,9 +147,9 @@ export default {
       bgColorError: false,
       bgColorErrorMsg: "",
       serverErrorMsg: "",
-      maskingTape: "",
-      maskingTapeError: false,
-      maskingTapeErrorMsg: "",
+      tapeStyle: "",
+      tapeStyleError: false,
+      tapeStyleErrorMsg: "",
       colorList: [
         { id: "NCC1", name: "pink", value: "#f6d8e4" },
         { id: "NCC2", name: "orange", value: "#f7e3cb" },
@@ -158,7 +158,7 @@ export default {
         { id: "NCC5", name: "blue", value: "#d7ebf4" },
         { id: "NCC6", name: "purple", value: "#e7d4e8" },
       ],
-      maskingTapeList: [
+      tapeStyleList: [
         { id: "NMC1", name: "01", value: "masking-tape-01.jpg" },
         { id: "NMC2", name: "02", value: "masking-tape-02.jpg" },
         { id: "NMC3", name: "03", value: "masking-tape-03.jpg" },
@@ -182,10 +182,10 @@ export default {
         this.bgColorErrorMsg = "";
       }
     },
-    maskingTape() {
-      if (this.maskingTape) {
-        this.maskingTapeError = false;
-        this.maskingTapeErrorMsg = "";
+    tapeStyle() {
+      if (this.tapeStyle) {
+        this.tapeStyleError = false;
+        this.tapeStyleErrorMsg = "";
       }
     },
   },
@@ -201,9 +201,9 @@ export default {
       self.nameError = false;
       self.nameErrorMsg = "";
       self.content = "";
-      self.maskingTape = "";
-      self.maskingTapeError = false;
-      self.maskingTapeErrorMsg = "";
+      self.tapeStyle = "";
+      self.tapeStyleError = false;
+      self.tapeStyleErrorMsg = "";
       self.bgColor = "";
       self.bgColorError = false;
       self.bgColorErrorMsg = "";
@@ -217,9 +217,9 @@ export default {
         self.nameErrorMsg = "便條貼標題未填";
         validity = false;
       }
-      if (!self.maskingTape) {
-        self.maskingTapeError = true;
-        self.maskingTapeErrorMsg = "紙膠帶樣式未選";
+      if (!self.tapeStyle) {
+        self.tapeStyleError = true;
+        self.tapeStyleErrorMsg = "紙膠帶樣式未選";
         validity = false;
       }
       if (!self.bgColor) {
@@ -231,8 +231,15 @@ export default {
     },
     submitEvent() {
       let self = this;
+      let createItem = {
+        name: self.name,
+        content: self.content,
+        content: self.content,
+        bgColor: self.bgColor,
+        tapeStyle: self.tapeStyle
+      };
       if (self.checkNoteInput()) {
-        self.$emit("submitEvent");
+        self.$emit("submitEvent", createItem);
       }
     },
   },

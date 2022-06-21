@@ -160,8 +160,8 @@ export default {
     submitEvent() {
       let self = this;
       let createItem = {
-        name : self.task,
-        labelType : self.labelType
+        name: self.task,
+        labelType: self.labelType
       }
       if (self.checkTaskInput()) {
         self.$emit("submitEvent", createItem);

@@ -27,16 +27,9 @@ instance.interceptors.response.use(
   function (error) {
     if (error.response) {
       switch (error.response.status) {
-        // case 404:
-        //   alert("你要找的頁面不存在");
-        //   // go to 404 page
-        //   break;
         case 500:
           alert("程式發生問題");
-          // go to 500 page
           break;
-        // default:
-        //   alert(error.message);
       }
     }
     if (!window.navigator.onLine) {
@@ -208,5 +201,53 @@ export const apiTaskAdd = (userId, date, name, labelType) =>
     path: "/"+ path,
     value: {
       taskId: taskId,
+    },
+  });
+
+  // Notes 相關的 api
+  export const apiNotesQuery = (userId) =>
+  instance.get(`/users/${userId}/notes`);
+
+  export const apiNotesOrderUpdate = (userId, list1, list2, list3, list4) =>
+  instance.put(`/users/${userId}/notes`, {
+      userId: userId,
+      list1: list1,
+      list2: list2,
+      list3: list3,
+      list4: list4,
+    });
+
+  export const apiNoteAdd = (userId, name, content, bgColor, tapeStyle) =>
+  instance.patch(`/users/${userId}/notes`, {
+    op: "add",
+    path: "/list1",
+    value: {
+      name: name,
+      content: content,
+      bgColor: bgColor,
+      tapeStyle: tapeStyle,
+    },
+  });
+
+  export const apiNoteUpdate = (userId, path, noteId, name, content, bgColor, tapeStyle) =>
+  instance.patch(`/users/${userId}/notes`, {
+    op: "replace",
+    path: "/"+ path,
+    value: {
+      noteId: noteId,
+      name: name,
+      path: path,
+      content: content,
+      bgColor: bgColor,
+      tapeStyle: tapeStyle,
+    },
+  });
+
+  export const apiNoteDelete = (userId, path, noteId) =>
+  instance.patch(`/users/${userId}/notes`, {
+    op: "remove",
+    path: "/"+ path,
+    value: {
+      noteId: noteId,
     },
   });
