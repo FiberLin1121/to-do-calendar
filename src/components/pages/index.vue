@@ -385,35 +385,32 @@ export default {
           self.$store.commit("setUserId", res.data.id);
           self.$store.commit("setAccount", res.data.email);
           self.$store.commit("setUserName", res.data.name);
-          self.$store.commit("setToken", "123");
+          self.$store.commit("setToken", res.data.token);
           self.$store.commit("setFirstColor", res.data.labelSetting.firstColor);
-          self.$store.commit("setSecondColor", res.data.labelSetting.secondColor);
+          self.$store.commit(
+            "setSecondColor",
+            res.data.labelSetting.secondColor
+          );
           self.$store.commit("setThirdColor", res.data.labelSetting.thirdColor);
-          self.$store.commit("setFourthColor", res.data.labelSetting.fourthColor);
+          self.$store.commit(
+            "setFourthColor",
+            res.data.labelSetting.fourthColor
+          );
           self.$store.commit("setStoreToSession");
           self.$store.commit("isLoading", true);
           self.$router.push("innerPage/todoLists");
         })
         .catch((err) => {
-          self.loginErrorMsg = err.response.data;
+          // self.loginErrorMsg = err.response.data;
+          self.loginErrorMsg = "帳號或密碼錯誤";
         });
     },
     sendUserRegister(createItem) {
       let self = this;
       apiUserRegister(createItem.account, createItem.name, createItem.password)
         .then((res) => {
+          self.sendUserLogin(createItem);
           $("#registerModal").modal("hide");
-          self.$store.commit("setUserId", res.data.id);
-          self.$store.commit("setAccount", res.data.email);
-          self.$store.commit("setUserName", res.data.name);
-          self.$store.commit("setToken", "123");
-          self.$store.commit("setFirstColor", res.data.labelSetting.firstColor);
-          self.$store.commit("setSecondColor", res.data.labelSetting.secondColor);
-          self.$store.commit("setThirdColor", res.data.labelSetting.thirdColor);
-          self.$store.commit("setFourthColor", res.data.labelSetting.fourthColor);
-          self.$store.commit("setStoreToSession");
-          self.$store.commit("isLoading", true);
-          self.$router.push("innerPage/todoLists");
         })
         .catch((err) => {
           self.registerErrorMsg = err.response.data;

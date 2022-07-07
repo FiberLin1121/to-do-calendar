@@ -1,5 +1,9 @@
 import axios from "axios";
+import store from "../store";
+import router from "../router";
 
+
+// 使用 axios.create 建立 axios instance
 const instance = axios.create({
   // baseURL: "http://localhost:8080",
   baseURL: "/api",
@@ -8,9 +12,13 @@ const instance = axios.create({
   //   withCredentials: false, // default
 });
 
+
+//設置 request 攔截器
 instance.interceptors.request.use(
   function (config) {
-    // Do something before request is sent
+    if (store.state.token) {
+      config.headers.Authorization = "Bearer " + store.state.token;
+    }
     return config;
   },
   function (error) {
@@ -19,6 +27,7 @@ instance.interceptors.request.use(
   }
 );
 
+//設置 response 攔截器
 instance.interceptors.response.use(
   function (response) {
     // Do something with response data
@@ -27,6 +36,16 @@ instance.interceptors.response.use(
   function (error) {
     if (error.response) {
       switch (error.response.status) {
+        case 401:
+            router.push("/");
+            store.commit("clearStore");
+            store.commit("removeSession");
+            store.commit("isLoginModalOpen", true);
+          break;
+        case 403:
+            router.push("/innerPage/todoLists");
+            alert("您的權限不足");
+          break;
         case 500:
           alert("程式發生問題");
           break;
@@ -40,6 +59,7 @@ instance.interceptors.response.use(
   }
 );
 
+// 宣告 API 方法
 // User 相關的 api
 export const apiUserQuery = (userId) =>
   instance.get(`/users/${userId}`);

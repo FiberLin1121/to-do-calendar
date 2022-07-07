@@ -179,19 +179,16 @@ export default {
         self.$store.commit("setSecondColor", res.data.labelSetting.secondColor);
         self.$store.commit("setThirdColor", res.data.labelSetting.thirdColor);
         self.$store.commit("setFourthColor", res.data.labelSetting.fourthColor);
+        sessionStorage.setItem("firstColor", res.data.labelSetting.firstColor);
+        sessionStorage.setItem("secondColor", res.data.labelSetting.secondColor);
+        sessionStorage.setItem("thirdColor", res.data.labelSetting.thirdColor);
+        sessionStorage.setItem("fourthColor", res.data.labelSetting.fourthColor);
         $("#labelSettingModal").modal("hide");
       });
     },
     logout() {
       let self = this;
-      self.$store.commit("setUserId", "");
-      self.$store.commit("setAccount", "");
-      self.$store.commit("setUserName", "");
-      self.$store.commit("setToken", "");
-      self.$store.commit("setFirstColor", "");
-      self.$store.commit("setSecondColor", "");
-      self.$store.commit("setThirdColor", "");
-      self.$store.commit("setFourthColor", "");
+      self.$store.commit("clearStore");
       self.$store.commit("removeSession");
       self.$router.push("/");
     },

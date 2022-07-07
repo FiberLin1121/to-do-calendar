@@ -10,7 +10,8 @@ import Notes from "@/components/tabs/notes";
 import TodoLists from "@/components/tabs/todoLists";
 import HabitTracker from "@/components/tabs/habitTracker";
 
-//啟用 VueRouter 元件
+
+//Vue-router 在3.0版本以上會因路由重複調用報錯，所以加上這段錯誤處理
 const originalPush = VueRouter.prototype.push;
 VueRouter.prototype.push = function push(location, onResolve, onReject) {
   if (onResolve || onReject) {
@@ -18,6 +19,8 @@ VueRouter.prototype.push = function push(location, onResolve, onReject) {
   }
   return originalPush.call(this, location).catch((err) => err);
 };
+
+//啟用 VueRouter 元件
 Vue.use(VueRouter);
 
 const router = new VueRouter({
@@ -78,7 +81,6 @@ router.beforeEach((to, from, next) => {
       }, 1000);
     } else {
       store.commit("isLoginModalOpen", true);
-      console.log("router commit : isLoginModalOpen = true");
       next("/");
     }
   } else {

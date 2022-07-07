@@ -1,17 +1,39 @@
 <template>
   <section class="container-fuild innerpage-min-width innerpage-height">
     <div class="dot-decoration-header p-5"></div>
-    <!-- plus button -->
-    <div class="text-left mb-5">
-      <button
-        type="button"
-        class="btn btn-first text-white"
-        @click="openNoteCreateModal"
-      >
-        <font-awesome-icon icon="fa-solid fa-plus" />
-      </button>
+
+    <!-- no data reminder -->
+    <div
+      v-if="
+        this.list1.length == 0 &&
+        this.list2.length == 0 &&
+        this.list3.length == 0 &&
+        this.list4.length == 0
+      "
+    >
+      <!-- plus button -->
+      <div class="text-left mb-5">
+        <button
+          type="button"
+          class="btn btn-first text-white"
+          @click="openNoteCreateModal"
+        >
+          <font-awesome-icon icon="fa-solid fa-plus" />
+        </button>
+      </div>
+      <!-- /plus button -->
+      <div class="d-flex flex-column justify-content-center">
+        <div class="mb-5 text-first">請點「+」按鈕開始建立便利貼</div>
+        <div class="align-self-center no-data-icon-bg rounded-circle">
+          <font-awesome-icon
+            icon="fa-solid fa-note-sticky"
+            size="10x"
+            class="text-white mt-5"
+          />
+        </div>
+      </div>
+      <!-- /no data reminder -->
     </div>
-    <!-- /plus button -->
     <div class="row tracking-in-expand">
       <div class="col-3">
         <draggable
@@ -457,5 +479,11 @@ pre {
 
 .chosen {
   border: dashed 3px #f0a9b2;
+}
+
+.no-data-icon-bg {
+  background-color: #a5dee536;
+  width: 270px;
+  height: 270px;
 }
 </style>

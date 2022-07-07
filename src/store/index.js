@@ -67,5 +67,15 @@ export default new Vuex.Store({
       sessionStorage.removeItem("thirdColor", state.thirdColor);
       sessionStorage.removeItem("fourthColor", state.fourthColor);
     },
+    clearStore(state) {
+      state.userId = "";
+      state.account = "";
+      state.userName = "";
+      state.token = "";
+      state.firstColor = "";
+      state.secondColor = "";
+      state.thirdColor = "";
+      state.fourthColor = "";
+    }
   },
 });

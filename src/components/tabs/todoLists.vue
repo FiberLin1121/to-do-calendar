@@ -36,6 +36,7 @@
         <div class="container">
           <!-- no data reminder -->
           <div v-if="this.todoList.length == 0 && this.doneList.length == 0">
+            <!-- plus button -->
             <div class="d-flex text-left mx-4">
               <button
                 type="button"
@@ -45,6 +46,7 @@
                 <font-awesome-icon icon="fa-solid fa-plus" />
               </button>
             </div>
+            <!-- /plus button -->
             <div class="d-flex flex-column justify-content-center">
               <div class="mb-5 text-first">請點「+」按鈕開始建立代辦事項</div>
               <div class="align-self-center no-data-icon-bg rounded-circle">
