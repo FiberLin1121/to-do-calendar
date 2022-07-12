@@ -34,6 +34,17 @@
       </div>
       <!-- /no data reminder -->
     </div>
+     <!-- plus button -->
+      <div class="text-left mb-5">
+        <button
+          type="button"
+          class="btn btn-first text-white"
+          @click="openNoteCreateModal"
+        >
+          <font-awesome-icon icon="fa-solid fa-plus" />
+        </button>
+      </div>
+      <!-- /plus button -->
     <div class="row tracking-in-expand">
       <div class="col-3">
         <draggable

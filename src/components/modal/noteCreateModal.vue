@@ -240,6 +240,7 @@ export default {
       };
       if (self.checkNoteInput()) {
         self.$emit("submitEvent", createItem);
+        self.resetForm();
       }
     },
   },

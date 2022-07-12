@@ -22,21 +22,21 @@
         </div>
         <div class="modal-body">
           <form class="text-left">
-            <div class="form-group">
+            <!-- <div class="form-group">
               <label for="inputOldPassword">舊密碼</label>
               <input
-                type="text"
+                type="password"
                 class="form-control"
                 :class="{ 'is-invalid': oldPasswordError }"
                 placeholder="請輸入舊密碼"
                 v-model="oldPassword"
               />
               <div class="error-msg">{{ oldPasswordErrorMsg }}</div>
-            </div>
+            </div> -->
             <div class="form-group">
               <label for="inputNewPassword">新密碼</label>
               <input
-                type="text"
+                type="password"
                 class="form-control"
                 :class="{ 'is-invalid': newPasswordError }"
                 placeholder="請輸入新密碼"
@@ -146,11 +146,11 @@ export default {
       let validity = true;
 
       //空值檢查
-      if (!self.oldPassword) {
-        self.oldPasswordError = true;
-        self.oldPasswordErrorMsg = "舊密碼未填";
-        validity = false;
-      }
+      // if (!self.oldPassword) {
+      //   self.oldPasswordError = true;
+      //   self.oldPasswordErrorMsg = "舊密碼未填";
+      //   validity = false;
+      // }
       if (!self.newPassword) {
         self.newPasswordError = true;
         self.newPasswordErrorMsg = "新密碼未填";
@@ -163,23 +163,23 @@ export default {
       }
 
       //規則檢查
-      if (validity) {
-        if (self.newPassword.length < 8 || self.newPassword.length > 30) {
-          self.newPasswordError = true;
-          self.newPasswordErrorMsg = "密碼長度必須為8-30碼";
-          validity = false;
-        }
-      }
-      if (validity) {
-        let passwordExp = new RegExp(
-          /^(?=[0-9a-zA-Z]*\d)(?=[0-9a-zA-Z]*[a-zA-Z])[0-9a-zA-Z]{8,30}$/g
-        );
-        if (!self.newPassword.match(passwordExp)) {
-          self.newPasswordError = true;
-          self.newPasswordErrorMsg = "密碼必須包含英數字";
-          validity = false;
-        }
-      }
+      // if (validity) {
+      //   if (self.newPassword.length < 8 || self.newPassword.length > 30) {
+      //     self.newPasswordError = true;
+      //     self.newPasswordErrorMsg = "密碼長度必須為8-30碼";
+      //     validity = false;
+      //   }
+      // }
+      // if (validity) {
+      //   let passwordExp = new RegExp(
+      //     /^(?=[0-9a-zA-Z]*\d)(?=[0-9a-zA-Z]*[a-zA-Z])[0-9a-zA-Z]{8,30}$/g
+      //   );
+      //   if (!self.newPassword.match(passwordExp)) {
+      //     self.newPasswordError = true;
+      //     self.newPasswordErrorMsg = "密碼必須包含英數字";
+      //     validity = false;
+      //   }
+      // }
       if (self.newPassword != self.confirmPassword) {
         self.confirmPasswordError = true;
         self.confirmPasswordErrorMsg = "確認密碼與舊密碼不相同";
